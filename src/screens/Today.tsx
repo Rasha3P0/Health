@@ -65,7 +65,7 @@ export function Today() {
 
       {yesterdayMissing && (
         <button class="row-link" onClick={() => setFlowDate(yesterday)}>
-          <span>Missed yesterday? You can still add it.</span>
+          <span>Add yesterday's answers</span>
           <ChevronIcon size={18} />
         </button>
       )}
