@@ -19,6 +19,8 @@ export interface ScaleField {
   kind: 'scale';
   contract: 'blind';
   label: string;
+  /** Asked in the check-in, one at a time. Answered "Not at all" … "Very much". */
+  question: string;
   /** Short plain-language prompt shown under the label. */
   hint: string;
   /** Off by default; she can switch it on in Settings. */
@@ -39,21 +41,23 @@ export type Field = ScaleField | ChoiceField;
 // One direction for every scale, so there is nothing to decode on a foggy day:
 // 1 = not at all, 5 = very much. A reading, not a judgement.
 export const SCALE_ANCHORS = { low: 'Not at all', high: 'Very much' } as const;
+/** A word for every step, so she never has to decode what "3" means. */
+export const SCALE_LABELS: Record<number, string> = { 1: 'Not at all', 2: 'A little', 3: 'Somewhat', 4: 'A lot', 5: 'Very much' };
 export const SCALE_VALUES = [1, 2, 3, 4, 5] as const;
 /** Readings at or above this count as a "hard day" for that field in the summary. */
 export const HARD_DAY_THRESHOLD = 4;
 
 export const SCALE_FIELDS: ScaleField[] = [
-  { id: 'sleep', kind: 'scale', contract: 'blind', label: 'Poor sleep', hint: 'Last night' },
-  { id: 'energy', kind: 'scale', contract: 'blind', label: 'Low energy', hint: 'Today, overall' },
-  { id: 'mood', kind: 'scale', contract: 'blind', label: 'Low mood', hint: 'Today, overall' },
-  { id: 'fog', kind: 'scale', contract: 'blind', label: 'Brain fog', hint: 'Losing words, focus or thread' },
-  { id: 'aches', kind: 'scale', contract: 'blind', label: 'Joint or muscle aches', hint: 'Today, overall' },
-  { id: 'overload', kind: 'scale', contract: 'blind', label: 'Sensory or social overload', hint: 'Noise, light, people, demands' },
-  { id: 'flushes', kind: 'scale', contract: 'blind', label: 'Hot flushes or night sweats', hint: 'Last 24 hours' },
-  { id: 'anxiety', kind: 'scale', contract: 'blind', label: 'Anxiety', hint: 'Today, overall', optional: true },
-  { id: 'headache', kind: 'scale', contract: 'blind', label: 'Headaches', hint: 'Today, overall', optional: true },
-  { id: 'libido', kind: 'scale', contract: 'blind', label: 'Low sex drive', hint: 'Lately', optional: true },
+  { id: 'sleep', kind: 'scale', contract: 'blind', question: 'Did you sleep badly?', label: 'Poor sleep', hint: 'Last night' },
+  { id: 'energy', kind: 'scale', contract: 'blind', question: 'Low on energy?', label: 'Low energy', hint: 'Today, overall' },
+  { id: 'mood', kind: 'scale', contract: 'blind', question: 'Low in mood?', label: 'Low mood', hint: 'Today, overall' },
+  { id: 'fog', kind: 'scale', contract: 'blind', question: 'Brain fog?', label: 'Brain fog', hint: 'Losing words, focus or thread' },
+  { id: 'aches', kind: 'scale', contract: 'blind', question: 'Joint or muscle aches?', label: 'Joint or muscle aches', hint: 'Today, overall' },
+  { id: 'overload', kind: 'scale', contract: 'blind', question: 'Sensory or social overload?', label: 'Sensory or social overload', hint: 'Noise, light, people, demands' },
+  { id: 'flushes', kind: 'scale', contract: 'blind', question: 'Hot flushes or night sweats?', label: 'Hot flushes or night sweats', hint: 'Last 24 hours' },
+  { id: 'anxiety', kind: 'scale', contract: 'blind', question: 'Feeling anxious?', label: 'Anxiety', hint: 'Today, overall', optional: true },
+  { id: 'headache', kind: 'scale', contract: 'blind', question: 'Headaches?', label: 'Headaches', hint: 'Today, overall', optional: true },
+  { id: 'libido', kind: 'scale', contract: 'blind', question: 'Low sex drive?', label: 'Low sex drive', hint: 'Lately', optional: true },
 ];
 
 export const BLEEDING_FIELD: ChoiceField = {

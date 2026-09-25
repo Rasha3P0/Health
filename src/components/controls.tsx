@@ -1,75 +1,46 @@
-import { SCALE_ANCHORS, SCALE_VALUES } from '../content/fields';
+import { CheckIcon } from './icons';
 
-// Big, calm tap targets. Tapping the selected value again clears it, so a
+// Big, calm tap targets. Tapping the selected option again clears it, so a
 // mis-tap is never stuck. Nothing is ever required.
 
-export function Scale(props: {
-  id: string;
+/** One choice from a vertical list. `level` draws a 1–5 fill meter beside each option. */
+export function OptionStack(props: {
   label: string;
-  hint?: string;
-  value: number | undefined;
-  onChange: (v: number | undefined) => void;
-}) {
-  const { id, label, hint, value, onChange } = props;
-  return (
-    <fieldset class="field">
-      <legend>
-        <span class="field-label">{label}</span>
-        {hint && <span class="field-hint">{hint}</span>}
-      </legend>
-      <div class="scale" role="radiogroup" aria-label={label}>
-        {SCALE_VALUES.map((n) => (
-          <button
-            key={n}
-            type="button"
-            role="radio"
-            aria-checked={value === n}
-            aria-label={`${n}${n === 1 ? `, ${SCALE_ANCHORS.low}` : n === 5 ? `, ${SCALE_ANCHORS.high}` : ''}`}
-            class={value === n ? 'on' : ''}
-            onClick={() => onChange(value === n ? undefined : n)}
-            id={n === 1 ? `${id}-1` : undefined}
-          >
-            {n}
-          </button>
-        ))}
-      </div>
-      <div class="anchors" aria-hidden="true">
-        <span>{SCALE_ANCHORS.low}</span>
-        <span>{SCALE_ANCHORS.high}</span>
-      </div>
-    </fieldset>
-  );
-}
-
-export function SingleChoice(props: {
-  label: string;
-  hint?: string;
-  options: { value: string; label: string }[];
+  options: { value: string; label: string; level?: number }[];
   value: string | undefined;
   onChange: (v: string | undefined) => void;
 }) {
-  const { label, hint, options, value, onChange } = props;
+  const { label, options, value, onChange } = props;
   return (
-    <fieldset class="field">
-      <legend>
-        <span class="field-label">{label}</span>
-        {hint && <span class="field-hint">{hint}</span>}
-      </legend>
-      <div class="chips" role="radiogroup" aria-label={label}>
-        {options.map((o) => (
+    <div class="options" role="radiogroup" aria-label={label}>
+      {options.map((o) => {
+        const on = value === o.value;
+        return (
           <button
             key={o.value}
             type="button"
             role="radio"
-            aria-checked={value === o.value}
-            class={`chip${value === o.value ? ' on' : ''}`}
-            onClick={() => onChange(value === o.value ? undefined : o.value)}
+            aria-checked={on}
+            class={`option${on ? ' on' : ''}`}
+            onClick={() => onChange(on ? undefined : o.value)}
           >
-            {o.label}
+            {o.level !== undefined && <Meter level={o.level} />}
+            <span class="option-label">{o.label}</span>
+            <span class="option-tick" aria-hidden="true">{on && <CheckIcon size={20} />}</span>
           </button>
-        ))}
-      </div>
-    </fieldset>
+        );
+      })}
+    </div>
+  );
+}
+
+function Meter({ level }: { level: number }) {
+  return (
+    <span class="meter" aria-hidden="true">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <span key={i} class={i <= level ? 'lit' : ''} />
+      ))}
+    </span>
   );
 }
 
@@ -84,18 +55,15 @@ export function MultiChoice(props: {
   const toggle = (id: string) => onChange(value.includes(id) ? value.filter((v) => v !== id) : [...value, id]);
   return (
     <div class={`chips${stacked ? ' stacked' : ''}`} role="group" aria-label={label}>
-      {options.map((o) => (
-        <button
-          key={o.id}
-          type="button"
-          aria-pressed={value.includes(o.id)}
-          class={`chip${value.includes(o.id) ? ' on' : ''}`}
-          onClick={() => toggle(o.id)}
-        >
-          {value.includes(o.id) && <span aria-hidden="true">✓ </span>}
-          {o.label}
-        </button>
-      ))}
+      {options.map((o) => {
+        const on = value.includes(o.id);
+        return (
+          <button key={o.id} type="button" aria-pressed={on} class={`chip${on ? ' on' : ''}`} onClick={() => toggle(o.id)}>
+            {stacked && <span class="box" aria-hidden="true">{on && <CheckIcon size={16} />}</span>}
+            <span>{o.label}</span>
+          </button>
+        );
+      })}
     </div>
   );
 }

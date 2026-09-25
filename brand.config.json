@@ -2,8 +2,8 @@
   "name": "Working Title",
   "shortName": "Working Title",
   "tagline": "Your symptoms, on the record.",
-  "themeColor": "#2f4a47",
-  "backgroundColor": "#f7f5f0",
+  "themeColor": "#fff8f0",
+  "backgroundColor": "#fff8f0",
   "analytics": {
     "provider": "none",
     "domain": ""

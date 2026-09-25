@@ -9,6 +9,8 @@ export interface DayEntry {
   savedAt: string;
   /** True if first recorded on a later day (she may log yesterday). */
   late?: boolean;
+  /** She reached the end of the check-in (skipped questions still count). */
+  finished?: boolean;
 }
 
 export interface WeekEntry {

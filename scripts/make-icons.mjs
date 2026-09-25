@@ -24,7 +24,7 @@ for (const [name, size, pad] of targets) {
   // Apple and maskable icons are cropped by the OS, so fill the square.
   const body = svg.replace('rx="112"', name === 'icon-192.png' || name === 'icon-512.png' ? 'rx="112"' : 'rx="0"');
   await page.setContent(
-    `<body style="margin:0;background:#2f4a47;display:grid;place-items:center;width:${size}px;height:${size}px">` +
+    `<body style="margin:0;background:#fdeadb;display:grid;place-items:center;width:${size}px;height:${size}px">` +
       `<div style="width:${inner}px;height:${inner}px">${body.replace('<svg ', `<svg width="${inner}" height="${inner}" `)}</div></body>`,
   );
   await page.screenshot({ path: `public/icons/${name}`, omitBackground: name.startsWith('icon-') && !name.includes('maskable') });

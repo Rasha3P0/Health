@@ -7,6 +7,7 @@ import { dayRange, formatDay, fromDayKey } from '../lib/dates';
 import { buildSummary, type Summary } from '../lib/summary';
 import type { Period } from '../lib/types';
 import { useStore } from '../store';
+import { EnvelopeIcon } from '../components/icons';
 
 const KIND_LABEL: Record<Period['kind'], string> = {
   gp: 'GP appointment',
@@ -47,19 +48,24 @@ function Blinded() {
   if (!period) {
     if (revealedPeriods(snap.periods, today).length) return null;
     return (
-      <p class="notice no-print">
-        Nothing revealed yet. <a href="#/prep">Set your appointment date</a> and your summary appears here on that day.
-      </p>
+      <section class="card sealed no-print">
+        <span class="sealed-icon"><EnvelopeIcon size={26} /></span>
+        <h2>Nothing to open yet</h2>
+        <p class="quiet">Your check-ins are being kept safely. Add your appointment date and they open here as a one-page summary on that day.</p>
+        <a class="button primary" href="#/prep">Add a date</a>
+      </section>
     );
   }
   const logged = new Set(snap.days.filter((d) => Object.keys(d.scales).length > 0).map((d) => d.date));
   const days = dayRange(period.start, period.revealOn);
   const lead = (fromDayKey(period.start).getDay() + 6) % 7; // blanks before a Monday start
   return (
-    <section class="card no-print" aria-labelledby="blind-h">
-      <h2 id="blind-h">Hidden until {formatDay(period.revealOn)}</h2>
+    <section class="card sealed no-print" aria-labelledby="blind-h">
+      <span class="sealed-icon"><EnvelopeIcon size={26} /></span>
+      <h2 id="blind-h">Sealed until {formatDay(period.revealOn)}</h2>
       <p class="quiet">
-        Dots show days you recorded. Not what you recorded: that's the point. Gaps are normal and change nothing.
+        Each dot is a day you checked in. What you recorded stays sealed, so you can't steer it and one bad day can't colour it.
+        Gaps are normal and change nothing.
       </p>
       <div class="dots" role="img" aria-label={`${[...logged].filter((d) => d >= period.start && d <= today).length} days recorded so far`}>
         {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => <span key={`h${i}`} class="dot-h">{d}</span>)}

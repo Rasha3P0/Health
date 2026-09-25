@@ -13,6 +13,7 @@ interface Store {
   yesterday: DayKey;
   setScale(date: DayKey, field: string, value: number | undefined): void;
   setBleeding(date: DayKey, value: string | undefined): void;
+  finishDay(date: DayKey): void;
   setWeekChanges(changes: string[]): void;
   setPeriods(periods: Period[]): void;
   setPrep(prep: Prep): void;
@@ -81,6 +82,7 @@ export function StoreProvider({ children }: { children: preact.ComponentChildren
           return d;
         }),
       setBleeding: (date, value) => updateDay(date, (d) => ({ ...d, bleeding: value })),
+      finishDay: (date) => updateDay(date, (d) => ({ ...d, finished: true })),
       setWeekChanges: (changes) => {
         const week = isoWeek(today);
         const entry = { week, changes, savedAt: new Date().toISOString() };

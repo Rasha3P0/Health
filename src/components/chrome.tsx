@@ -1,20 +1,25 @@
+import { useState } from 'preact/hooks';
 import brand from '../../brand.config.json';
 import { NOT_MEDICAL_ADVICE, URGENT_HELP } from '../content/copy';
 import { needsInstallForSafety } from '../lib/platform';
+import { CalendarIcon, EnvelopeIcon, MoreIcon, ShareIcon, SunIcon } from './icons';
 
 export type Route = 'today' | 'prep' | 'record' | 'more';
 
-const TABS: { id: Route; label: string; icon: string }[] = [
-  { id: 'today', label: 'Today', icon: '●' },
-  { id: 'prep', label: 'Appointment', icon: '◆' },
-  { id: 'record', label: 'Record', icon: '▤' },
-  { id: 'more', label: 'More', icon: '≡' },
+const TABS: { id: Route; label: string; Icon: (p: { size?: number }) => preact.JSX.Element }[] = [
+  { id: 'today', label: 'Today', Icon: SunIcon },
+  { id: 'prep', label: 'Appointment', Icon: CalendarIcon },
+  { id: 'record', label: 'Record', Icon: EnvelopeIcon },
+  { id: 'more', label: 'You', Icon: MoreIcon },
 ];
 
 export function Header() {
   return (
     <header class="top no-print">
-      <span class="brand">{brand.name}</span>
+      <span class="brand">
+        <span class="brand-dot" aria-hidden="true" />
+        {brand.name}
+      </span>
       {brand.privateBeta && <span class="beta">Private beta</span>}
     </header>
   );
@@ -23,10 +28,10 @@ export function Header() {
 export function Nav({ route }: { route: Route }) {
   return (
     <nav class="tabs no-print" aria-label="Main">
-      {TABS.map((t) => (
-        <a key={t.id} href={`#/${t.id}`} aria-current={route === t.id ? 'page' : undefined}>
-          <span aria-hidden="true" class="tab-icon">{t.icon}</span>
-          {t.label}
+      {TABS.map(({ id, label, Icon }) => (
+        <a key={id} href={`#/${id}`} aria-current={route === id ? 'page' : undefined}>
+          <span class="tab-pill"><Icon size={22} /></span>
+          {label}
         </a>
       ))}
     </nav>
@@ -36,7 +41,7 @@ export function Nav({ route }: { route: Route }) {
 export function Footer() {
   return (
     <footer class="foot no-print">
-      <p class="nma">{NOT_MEDICAL_ADVICE}</p>
+      <p>{NOT_MEDICAL_ADVICE}</p>
       <details>
         <summary>Need help now?</summary>
         <p>{URGENT_HELP.lead}</p>
@@ -52,28 +57,38 @@ export function Footer() {
   );
 }
 
-function ShareIcon() {
-  return (
-    <svg class="share-icon" viewBox="0 0 16 20" width="12" height="15" aria-hidden="true">
-      <path d="M8 1v11M4.5 4.5 8 1l3.5 3.5M5 8H2v11h12V8h-3" fill="none" stroke="currentColor" stroke-width="1.6" />
-    </svg>
-  );
-}
+const SNOOZE_KEY = 'install-snoozed-until';
+const readSnooze = () => {
+  try {
+    return Number(localStorage.getItem(SNOOZE_KEY) || 0);
+  } catch {
+    return 0;
+  }
+};
 
-export function InstallNotice({ compact }: { compact?: boolean }) {
-  if (!needsInstallForSafety()) return null;
+/**
+ * On iPhone, Safari can clear a site's data after 7 days unused; Home Screen
+ * apps are kept. She can snooze this for 3 days (fewer than 7) but not dismiss it.
+ */
+export function InstallNotice({ snoozable = true }: { snoozable?: boolean }) {
+  const [hidden, setHidden] = useState(() => snoozable && readSnooze() > Date.now());
+  if (!needsInstallForSafety() || hidden) return null;
+  const snooze = () => {
+    try {
+      localStorage.setItem(SNOOZE_KEY, String(Date.now() + 3 * 86_400_000));
+    } catch { /* storage blocked: just hide for now */ }
+    setHidden(true);
+  };
   return (
-    <aside class="notice install">
-      <strong>Keep your record safe on iPhone</strong>
-      {!compact && (
-        <p>
-          Safari can clear a website's saved data if you don't open it for 7 days. Apps on your Home Screen are kept.
-        </p>
-      )}
+    <aside class="install">
+      <strong>Keep it on your Home Screen</strong>
       <p>
-        Tap <span class="kbd">Share <ShareIcon /></span> then <span class="kbd">Add to Home Screen</span>, and
-        open it from there.
+        On iPhone, Safari can clear saved data from sites you haven't opened for a week. Apps on your Home Screen are kept safe.
       </p>
+      <p class="how-to">
+        Tap <span class="kbd">Share <ShareIcon size={16} /></span> then <span class="kbd">Add to Home Screen</span>
+      </p>
+      {snoozable && <button class="link" onClick={snooze}>Remind me later</button>}
     </aside>
   );
 }
