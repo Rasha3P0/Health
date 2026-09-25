@@ -9,7 +9,7 @@ import { useStore } from '../store';
 export function More() {
   return (
     <main class="wrap" id="main">
-      <h1>More</h1>
+      <h1>You</h1>
       <InstallNotice />
       <Fields />
       <Backup />
