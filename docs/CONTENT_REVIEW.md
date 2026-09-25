@@ -24,5 +24,5 @@ All health-adjacent copy is **draft** until it has been checked against current 
 
 - "Know what you can ask for" content: needs NHS guidance and clinician review before anything is written.
 - Trusted Care finder: needs wording approved entry by entry, plus clinician consent outreach. Exclude the caution tier, `doNotList` entries, entries without a website, and all Right to Choose content. The provider controversy goes behind an expander.
-- Right to Choose: the copy is out of date (April 2026 NHS changes).
+- Right to Choose: the copy is out of date. **Owner to check** whether the April 2026 NHS changes went ahead as planned, and update this note.
 - Newson listing updates and the Panorama year need checking.

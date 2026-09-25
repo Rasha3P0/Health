@@ -47,6 +47,8 @@ export interface Prep {
   medication?: string;
   /** Roughly when her mother's periods stopped. */
   motherAge?: string;
+  /** Furthest Appointment step reached (1–8), so the tab can offer "Carry on". */
+  stepReached?: number;
 }
 
 export interface Settings {

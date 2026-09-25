@@ -7,6 +7,17 @@ import { buildSummary } from '../lib/summary';
 import { useStore } from '../store';
 
 export function LetterScreen() {
+  return (
+    <main class="wrap" id="main">
+      <a class="back no-print" href="#/prep"><BackIcon size={18} /> Appointment</a>
+      <h1 class="no-print">Your letter</h1>
+      <LetterView />
+    </main>
+  );
+}
+
+/** The letter and its Copy / Share / Print actions. Used on its own screen and as the last Appointment step. */
+export function LetterView() {
   const { snap, today } = useStore();
   const [status, setStatus] = useState<string | null>(null);
 
@@ -34,17 +45,16 @@ export function LetterScreen() {
     } catch { /* she closed the share sheet */ }
   };
 
-  return (
-    <main class="wrap" id="main">
-      <a class="back no-print" href="#/prep"><BackIcon size={18} /> Appointment</a>
-      <h1 class="no-print">Your letter</h1>
+  if (!hasLetterContent(snap.prep)) {
+    return (
+      <section class="card no-print">
+        <p>Pick what you'd like to discuss on the Appointment page and your letter builds itself here.</p>
+        <a class="button primary" href="#/prep">Choose what to discuss</a>
+      </section>
+    );
+  }
 
-      {!hasLetterContent(snap.prep) ? (
-        <section class="card no-print">
-          <p>Pick what you'd like to discuss on the Appointment page and your letter builds itself here.</p>
-          <a class="button primary" href="#/prep">Choose what to discuss</a>
-        </section>
-      ) : (
+  return (
         <>
           <p class="quiet no-print">
             Written from your choices. Hand it over, print it, or paste it into your GP practice's online form before the appointment.
@@ -73,7 +83,5 @@ export function LetterScreen() {
             </div>
           </article>
         </>
-      )}
-    </main>
   );
 }

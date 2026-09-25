@@ -30,6 +30,8 @@ Bleeding is visible. Its signpost ("When to get bleeding checked") is always on 
 
 The daily check-in asks one question per screen. It moves on by itself after a tap and has Back and Skip. Today is a front door with a single "Start" button, not a form. The weekly question is added to the check-in only while it's due.
 
+Appointment prep uses the same frame: 8 steps, and the counter never changes (background screens count under step 4, like check-in follow-ups). Single-pick screens move on by themselves; background can be skipped in one tap. No step scrolls more than about 1.5 phone screens, except the letter itself. After the first run-through, the tab shows a one-line-per-section summary with Edit links, plus "Carry on" if she stopped part way. Every pick saves as she goes, so the letter is the same however she got there.
+
 ## 5. Taps, never prose
 
 Every input is a tap. There are no text boxes anywhere, not even "notes". Prose asks her to appraise herself, and prose is what stops people filling in logs. The sheet has a lined "Notes from the appointment" space for pen and paper.
