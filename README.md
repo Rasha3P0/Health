@@ -35,7 +35,9 @@ Stack: Vite, Preact, TypeScript. Data is stored in IndexedDB on the device. The 
 
 ## Deploy
 
-`dist/` is a static site. Netlify and Cloudflare Pages both honour `public/_headers` (noindex, no-referrer). On any other host, set the `X-Robots-Tag: noindex` header yourself.
+Hosted on **Vercel**: import the GitHub repo once and every push to `main` redeploys. `vercel.json` sets the build (`npm run build` → `dist/`) and the noindex/privacy headers. Pull requests get their own preview URL.
+
+`dist/` is a plain static site, so it also runs elsewhere: Netlify and Cloudflare Pages read `public/_headers` instead. On any other host, set `X-Robots-Tag: noindex` yourself.
 
 ## Before going public
 
