@@ -94,10 +94,10 @@ export const LAST_PERIOD: LetterOption[] = [
 ];
 
 export const CONTRACEPTION: LetterOption[] = [
-  { id: 'hormonal-coil', label: 'Hormonal coil', letter: 'Contraception: hormonal coil.' },
-  { id: 'copper-coil', label: 'Copper coil', letter: 'Contraception: copper coil.' },
-  { id: 'implant', label: 'Implant', letter: 'Contraception: implant.' },
-  { id: 'pill', label: 'Pill', letter: 'Contraception: the pill.' },
+  { id: 'hormonal-coil', label: 'Hormonal coil', letter: 'I use a hormonal coil for contraception.' },
+  { id: 'copper-coil', label: 'Copper coil', letter: 'I use a copper coil for contraception.' },
+  { id: 'implant', label: 'Implant', letter: 'I use an implant for contraception.' },
+  { id: 'pill', label: 'Pill', letter: 'I take the pill for contraception.' },
   { id: 'other', label: 'Other method', letter: 'I use contraception.' },
   { id: 'not-using', label: 'Not using any', letter: "I'm not using contraception." },
   { id: 'not-relevant', label: 'Not relevant to me', letter: "Contraception isn't relevant to me." },

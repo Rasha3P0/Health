@@ -56,6 +56,13 @@ function medicationLines(prep: Prep): string[] {
   return lines;
 }
 
+/** A coil or implant and "no periods to go by" read as one line; otherwise two. */
+function periodLines(prep: Prep): string[] {
+  const device = { 'hormonal-coil': 'a hormonal coil', implant: 'an implant' }[prep.contraception ?? ''];
+  if (prep.lastPeriod === 'none' && device) return [`I have ${device}, so I don't have periods to go by.`];
+  return [line(LAST_PERIOD, prep.lastPeriod), line(CONTRACEPTION, prep.contraception)];
+}
+
 /** "Day to day: I exercise …, drink … and have …. I often skip meals." */
 function dayToDay(prep: Prep): string {
   const said = (key: (typeof LIFESTYLE)[number]['key']) =>
@@ -94,16 +101,9 @@ export function buildLetter(args: {
       : `The things bothering me most are ${list(symptoms)}.`;
   sections.push({ text: [opener, bothering, line(DURATION, prep.duration)].filter(Boolean).join(' ') });
 
-  // What it's costing her comes before any symptom numbers.
-  const impact = IMPACT.filter((o) => prep.impact.includes(o.id)).map((o) => o.letter);
-  if (impact.length) {
-    const stopped = impact.find((t) => t.startsWith("I've stopped"));
-    const areas = impact.filter((t) => t !== stopped);
-    const parts: string[] = [];
-    if (areas.length) parts.push(`It's affecting ${list(areas)}.`);
-    if (stopped) parts.push(`${stopped}.`);
-    sections.push({ heading: 'How this is affecting my life', text: parts.join(' ') });
-  }
+  // What it's costing her comes before any symptom numbers: one per line, in the list's self-first order.
+  const impact = IMPACT.filter((o) => prep.impact.includes(o.id)).map((o) => o.label);
+  if (impact.length) sections.push({ heading: 'How this is affecting my life', bullets: impact });
 
   if (period && summary && summary.daysLogged > 0) {
     const most = summary.mostAffected.map((f) => f.label.toLowerCase());
@@ -117,11 +117,11 @@ export function buildLetter(args: {
     sections.push({ text });
   } else if (period && period.revealOn > today) {
     sections.push({
-      text: `I've been keeping a daily symptom record since ${formatDay(period.start)}. It stays sealed until ${formatDay(period.revealOn)} so that I can't steer it, and I'll bring the summary with me.`,
+      text: `I've been keeping a daily symptom record since ${formatDay(period.start)}. It stays sealed until ${formatDay(period.revealOn)} so that seeing it can't influence what I record, and I'll bring the summary with me.`,
     });
   }
 
-  const background = [...medicationLines(prep), dayToDay(prep), line(MOTHER_AGE, prep.motherAge), line(LAST_PERIOD, prep.lastPeriod), line(CONTRACEPTION, prep.contraception)].filter(Boolean);
+  const background = [...medicationLines(prep), dayToDay(prep), line(MOTHER_AGE, prep.motherAge), ...periodLines(prep)].filter(Boolean);
   if (background.length) sections.push({ heading: 'Background', bullets: background });
 
   const goals = pick(GOALS, prep.goals);
@@ -138,8 +138,16 @@ export function buildLetter(args: {
     });
   }
 
-  const needs = pick(NEEDS, prep.needs);
-  if (needs.length) sections.push({ heading: 'Things that help me in appointments', bullets: needs });
+  // "I'm neurodivergent" introduces the section rather than sitting in the list.
+  const nd = prep.needs.includes('n-nd');
+  const needs = NEEDS.filter((o) => o.id !== 'n-nd' && prep.needs.includes(o.id)).map((o) => o.label);
+  if (nd || needs.length) {
+    sections.push({
+      heading: 'Things that help me in appointments',
+      text: nd ? (needs.length ? "I'm neurodivergent. These things help me in appointments:" : "I'm neurodivergent.") : undefined,
+      bullets: needs.length ? needs : undefined,
+    });
+  }
 
   sections.push({ text: 'Thank you for your time.' });
 

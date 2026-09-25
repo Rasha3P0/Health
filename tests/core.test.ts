@@ -213,7 +213,8 @@ describe('letter: whole-person content', () => {
     const text = letterToText(buildLetter({ prep, today: '2026-09-10' }));
     expect(text).toMatch(/^Dear Doctor,\n\nI'd like to get back to thinking clearly\./);
     expect(text).toContain('going on for more than a year.');
-    expect(text).toContain("It's affecting my work and parenting or caring for others. I've stopped doing things I enjoy.");
+    // Bullets, in the self-first list order, whatever order she tapped them in.
+    expect(text).toContain("How this is affecting my life:\n- I've stopped doing things I enjoy\n- Work\n- Parenting or caring");
     expect(text.indexOf('How this is affecting my life')).toBeLessThan(text.indexOf('Thank you'));
   });
 
@@ -302,5 +303,31 @@ describe('letter: day to day', () => {
   it('leaves out not sure and prefer not to say', () => {
     expect(t({ alcohol: 'skip', smoking: 'skip' })).not.toContain('Day to day');
     expect(t({ alcohol: 'unsure', meals: 'regular' })).toContain('- Day to day: I eat regular meals.');
+  });
+});
+
+describe('letter: v3 wording', () => {
+  const t = (extra: Partial<typeof EMPTY_PREP>, period?: Period) =>
+    letterToText(buildLetter({ prep: { ...EMPTY_PREP, goals: ['talk'], ...extra }, today: '2026-09-10', period }));
+  it('merges a coil or implant with no periods into one line', () => {
+    const text = t({ lastPeriod: 'none', contraception: 'hormonal-coil' });
+    expect(text).toContain("- I have a hormonal coil, so I don't have periods to go by.");
+    expect(text).not.toContain('for contraception');
+    expect(t({ lastPeriod: 'none', contraception: 'copper-coil' })).toContain("- I don't have periods to go by.\n- I use a copper coil for contraception.");
+  });
+  it('uses full sentences for contraception', () => {
+    expect(t({ contraception: 'pill' })).toContain('- I take the pill for contraception.');
+  });
+  it('introduces the needs section with the neurodivergent line', () => {
+    expect(t({ needs: ['n-nd', 'n-time'] })).toContain("Things that help me in appointments:\nI'm neurodivergent. These things help me in appointments:\n- I may need a moment to answer");
+    expect(t({ needs: ['n-nd'] })).toMatch(/Things that help me in appointments:\nI'm neurodivergent\.\n\nThank you/);
+  });
+  it('explains the seal without "steer"', () => {
+    expect(t({}, { id: 'p', start: '2026-09-01', revealOn: '2026-10-01', kind: 'gp' })).toContain("so that seeing it can't influence what I record");
+  });
+  it('puts background in the self-first order', () => {
+    const text = t({ meds: ['gp'], lifestyle: { exercise: 'most' }, motherAge: 'gt45', lastPeriod: 'lt3', contraception: 'pill' });
+    const order = ['My prescribed medication', 'Day to day', "My mother's periods", 'My last period', 'the pill'].map((w) => text.indexOf(w));
+    expect(order.every((n, i) => n > 0 && (i === 0 || n > order[i - 1]))).toBe(true);
   });
 });
