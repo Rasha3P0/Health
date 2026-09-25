@@ -37,7 +37,7 @@ export function Welcome() {
             <span class="step-icon lilac"><EnvelopeIcon /></span>
             <div>
               <strong>Sealed until the day</strong>
-              <p>Your answers stay sealed, so one bad day doesn't colour the picture. Bleeding is always shown.</p>
+              <p>Your answers stay sealed, so one bad day doesn't colour the picture. Bleeding is always shown, for your safety.</p>
             </div>
           </li>
           <li>

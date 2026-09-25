@@ -96,14 +96,16 @@ function About() {
     <section class="card">
       <h2>About {brand.name}</h2>
       <p>
-        So much health advice for women is really about fertility. This isn't. It helps you walk into an appointment with a dated
-        record of your symptoms, so the conversation starts from what's actually happening to you.
+        So much health advice for women is really about fertility. This isn't. It's here so you're seen as a whole person, not a
+        single question. It helps you walk into an appointment with a dated record of your symptoms and what they're costing you,
+        so the conversation starts from what's actually happening to you.
       </p>
       <h3>Why your readings are hidden</h3>
       <p>
         A single day tells you very little. Patterns show up over weeks. If you can see your trend while recording, it's easy to
         start recording towards it, or to be knocked by one bad day. So readings stay hidden until your reveal date. Bleeding is
-        never hidden.
+        never hidden, for your safety: unexpected or heavy bleeding can need checking promptly, so you should always be able to
+        see it.
       </p>
       <h3>Privacy</h3>
       <p>
