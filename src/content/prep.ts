@@ -15,10 +15,13 @@ export interface LetterOption extends Option {
   letter: string;
 }
 
+// Standing directive: her own health and life come first in every list; caring
+// for others and reproductive items come lower. Never removed, only placed lower.
+
 // Specific asks first. "Talk through" stays as the general fallback.
 // Goals and QUESTIONS don't overlap: tests live only in QUESTIONS, options only in GOALS.
 export const GOALS: Option[] = [
-  { id: 'treatment', label: 'Discuss treatment options, including HRT' },
+  { id: 'treatment', label: 'Discuss treatment options' },
   { id: 'cause', label: "Understand what's behind this, and check for other causes" },
   { id: 'sleep-help', label: 'Get help with my sleep' },
   { id: 'mood-help', label: 'Get help with my mood' },
@@ -26,31 +29,33 @@ export const GOALS: Option[] = [
   { id: 'referral', label: 'Ask whether a referral would help' },
   { id: 'review', label: 'Review something I already take' },
   { id: 'plan', label: 'Leave with a clear next step and a follow-up plan' },
+  // Lower on purpose: naming HRT up front frames everything as menopause before other causes are considered.
+  { id: 'hrt', label: 'Discuss HRT specifically' },
   { id: 'talk', label: 'Talk through these symptoms together' },
 ];
 
 // What the symptoms are costing her: the centre of the letter.
 export const IMPACT: LetterOption[] = [
-  { id: 'work', label: 'Work', letter: 'my work' },
-  { id: 'caring', label: 'Parenting or caring', letter: 'parenting or caring for others' },
-  { id: 'relationships', label: 'Relationships', letter: 'my relationships' },
-  { id: 'exercise', label: 'Exercise', letter: 'exercise' },
-  { id: 'social', label: 'Social life', letter: 'my social life' },
-  { id: 'concentration', label: 'Concentration', letter: 'my concentration' },
-  { id: 'driving', label: 'Driving', letter: 'driving' },
   { id: 'home', label: 'Looking after myself or home', letter: 'looking after myself and my home' },
+  { id: 'concentration', label: 'Concentration', letter: 'my concentration' },
+  { id: 'exercise', label: 'Exercise', letter: 'exercise' },
   { id: 'enjoy', label: "I've stopped doing things I enjoy", letter: "I've stopped doing things I enjoy" },
+  { id: 'social', label: 'Social life', letter: 'my social life' },
+  { id: 'driving', label: 'Driving', letter: 'driving' },
+  { id: 'work', label: 'Work', letter: 'my work' },
+  { id: 'relationships', label: 'Relationships', letter: 'my relationships' },
+  { id: 'caring', label: 'Parenting or caring', letter: 'parenting or caring for others' },
 ];
 
 /** Opens the letter: "I'd like to get back to …". */
 export const GET_BACK: LetterOption[] = [
-  { id: 'work', label: 'Working well', letter: 'working the way I know I can' },
-  { id: 'caring', label: 'Being there for people', letter: 'being there for the people I care for' },
-  { id: 'energy', label: 'Having energy', letter: 'having energy for my life' },
+  { id: 'myself', label: 'Feeling like myself', letter: 'feeling like myself' },
+  { id: 'energy', label: 'Having energy', letter: 'having energy for my daily life' },
   { id: 'thinking', label: 'Thinking clearly', letter: 'thinking clearly' },
   { id: 'sleep', label: 'Sleeping properly', letter: 'sleeping properly' },
   { id: 'enjoy', label: 'Enjoying things', letter: 'enjoying the things I care about' },
-  { id: 'myself', label: 'Feeling like myself', letter: 'feeling like myself' },
+  { id: 'work', label: 'Working well', letter: 'working the way I know I can' },
+  { id: 'caring', label: 'Being there for people', letter: 'being there for the people I care for' },
 ];
 
 // Optional background. "Prefer not to say" or skipped leaves the line out.

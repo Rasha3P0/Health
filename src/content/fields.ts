@@ -167,7 +167,7 @@ export function activeScaleFields(enabledOptional: string[]): ScaleField[] {
 // Weekly "what else changed" card. Taps only, captured before the reveal so it
 // can't be written to explain a result she has already seen.
 export const WEEKLY_CHANGES: { id: string; label: string }[] = [
-  { id: 'meds', label: 'Medication or HRT change' },
+  { id: 'meds', label: 'Medication or supplement change (including HRT)' },
   { id: 'supplement', label: 'New or stopped supplement' },
   { id: 'ill', label: 'Ill or injured' },
   { id: 'travel', label: 'Travel or holiday' },
