@@ -223,12 +223,6 @@ input[type='date'] {
 .option.on { border-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
 .option-label { flex: 1; }
 .option-tick { width: 20px; color: var(--accent); display: grid; place-items: center; }
-.meter { display: inline-flex; align-items: flex-end; gap: 3px; height: 22px; }
-.meter span { width: 5px; border-radius: 3px; background: var(--line); }
-.meter span:nth-child(1) { height: 30%; } .meter span:nth-child(2) { height: 47%; } .meter span:nth-child(3) { height: 64%; }
-.meter span:nth-child(4) { height: 82%; } .meter span:nth-child(5) { height: 100%; }
-.meter span.lit { background: var(--accent); }
-.option:not(.on) .meter span.lit { background: color-mix(in srgb, var(--accent) 55%, var(--line)); }
 
 .finish { margin: auto 0; text-align: center; padding: 2rem 0; }
 .finish-mark {

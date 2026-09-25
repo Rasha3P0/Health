@@ -36,7 +36,7 @@ Every input is a tap. There are no text boxes anywhere, not even "notes". Prose 
 
 ## 6. One direction, no decoding
 
-Every question has its own answer words ("How did you sleep?" → Well / OK / Not great / Badly / Barely at all), but they always run the same way: 1 = no problem, 5 = the worst. A small bar meter beside each answer shows the step. There's nothing to work out on a foggy day. Tapping a selected answer again clears it.
+Every question has its own answer words ("How did you sleep?" → Well / OK / Not great / Badly / Barely at all), but they always run the same way: 1 = no problem, 5 = the worst.  There are no bar icons: bars read as signal strength (more = better), which clashes with 5 = worst. There's nothing to work out on a foggy day. Tapping a selected answer again clears it.
 
 When sleep or mood is answered "Not great"/"A bit low" or worse, one follow-up asks what was behind it, as tick boxes. Those reasons are her own and sealed like the reading.
 

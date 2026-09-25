@@ -207,7 +207,7 @@ function CheckIn({ date, onClose }: { date: DayKey; onClose: () => void }) {
           <p class="quiet">{step.field.hint}</p>
           <OptionStack
             label={step.field.label}
-            options={SCALE_VALUES.map((n) => ({ value: String(n), label: step.field.answers[n - 1], level: n }))}
+            options={SCALE_VALUES.map((n) => ({ value: String(n), label: step.field.answers[n - 1] }))}
             value={entry?.scales[step.field.id]?.toString()}
             onChange={(v) => {
               setScale(date, step.field.id, v ? Number(v) : undefined);

@@ -3,10 +3,10 @@ import { CheckIcon } from './icons';
 // Big, calm tap targets. Tapping the selected option again clears it, so a
 // mis-tap is never stuck. Nothing is ever required.
 
-/** One choice from a vertical list. `level` draws a 1–5 fill meter beside each option. */
+/** One choice from a vertical list. */
 export function OptionStack(props: {
   label: string;
-  options: { value: string; label: string; level?: number }[];
+  options: { value: string; label: string }[];
   value: string | undefined;
   onChange: (v: string | undefined) => void;
 }) {
@@ -24,7 +24,6 @@ export function OptionStack(props: {
             class={`option${on ? ' on' : ''}`}
             onClick={() => onChange(on ? undefined : o.value)}
           >
-            {o.level !== undefined && <Meter level={o.level} />}
             <span class="option-label">{o.label}</span>
             <span class="option-tick" aria-hidden="true">{on && <CheckIcon size={20} />}</span>
           </button>
@@ -34,15 +33,6 @@ export function OptionStack(props: {
   );
 }
 
-function Meter({ level }: { level: number }) {
-  return (
-    <span class="meter" aria-hidden="true">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <span key={i} class={i <= level ? 'lit' : ''} />
-      ))}
-    </span>
-  );
-}
 
 export function MultiChoice(props: {
   label?: string;
