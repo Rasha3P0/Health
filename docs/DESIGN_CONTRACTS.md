@@ -30,7 +30,9 @@ Bleeding is visible. Its signpost ("When to get bleeding checked") is always on 
 
 The daily check-in asks one question per screen. It moves on by itself after a tap and has Back and Skip. Today is a front door with a single "Start" button, not a form. The weekly question is added to the check-in only while it's due.
 
-Appointment prep uses the same frame: 8 steps, and the counter never changes (background screens count under step 4, like check-in follow-ups). Single-pick screens move on by themselves; background can be skipped in one tap. No step scrolls more than about 1.5 phone screens, except the letter itself. After the first run-through, the tab shows a one-line-per-section summary with Edit links, plus "Carry on" if she stopped part way. Every pick saves as she goes, so the letter is the same however she got there.
+Appointment prep uses the same frame: 9 steps, and the counter never changes (background screens count under step 5, like check-in follow-ups). Single-pick screens move on by themselves; background can be skipped in one tap. Screens aim for no more than about 1.5 phone screens; the letter itself, the combined questions (about 1.6) and Day to day (about 1.7) run over. After the first run-through, the tab shows a one-line-per-section summary with Edit links, plus "Carry on" if she stopped part way. Every pick saves as she goes, so the letter is the same however she got there.
+
+**Self first.** In every picker, list, letter section and summary, options about her own health and life come first. Caring for others, and reproductive or fertility items, come lower. They are never removed, only placed lower. HRT sits below other medication and other treatment options, so nothing frames the appointment as menopause before other causes are considered.
 
 ## 5. Taps, never prose
 
