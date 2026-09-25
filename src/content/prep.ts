@@ -121,17 +121,17 @@ export const MEDICATION: LetterOption[] = [
   { id: 'skip', label: 'Prefer not to say', letter: '' },
 ];
 
+// Combined in natural pairs so she can cover more in fewer, fuller questions.
 export const QUESTIONS: Option[] = [
-  { id: 'q-cause', label: 'What do you think could be causing this?' },
-  // Age-neutral on purpose: NICE NG23 generally diagnoses perimenopause from symptoms over 45, so
-  // "would tests help?" can backfire. This works at any age without asking hers. Clinician to confirm.
-  { id: 'q-tests', label: 'Would tests help here, or is this assessed from symptoms?' },
-  { id: 'q-not-treat', label: "If you don't think this needs treating, could you explain why?" },
-  { id: 'q-if-worse', label: "If it doesn't get better, when should I come back?" },
-  { id: 'q-watch', label: 'Is there anything I should look out for in the meantime?' },
-  { id: 'q-record', label: 'Could you note in my record what we discussed and decided?' },
-  { id: 'q-read', label: 'Is there anything I could read about this afterwards?' },
+  // Tests half is age-neutral on purpose: NICE NG23 generally diagnoses perimenopause from symptoms
+  // over 45, so "would tests help?" alone can backfire. Clinician to confirm.
+  { id: 'q-cause', label: 'What do you think could be causing this, and would tests help or is it assessed from symptoms?' },
+  { id: 'q-not-treat', label: "What are my options, including not treating it? If you don't think it needs treating, could you explain why?" },
+  { id: 'q-if-worse', label: "If it doesn't get better, when should I come back, and what should I look out for in the meantime?" },
+  { id: 'q-record', label: 'Could you note in my record what we discussed and decided, and is there anything I could read afterwards?' },
 ];
+/** From this many picked, suggest a longer appointment. Never blocks. */
+export const QUESTIONS_PLENTY = 3;
 
 // Things that help a neurodivergent patient get a fair appointment. Framed as
 // what helps her, not as a diagnosis she has to disclose.

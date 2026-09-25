@@ -97,8 +97,16 @@ export function buildLetter(args: {
   const goals = pick(GOALS, prep.goals);
   if (goals.length) sections.push({ heading: "What I'd like from this appointment", bullets: goals });
 
-  const questions = pick(QUESTIONS, prep.questions);
-  if (questions.length) sections.push({ heading: "Questions I'd like to ask", bullets: questions });
+  // Her starred question leads; the rest follow in list order.
+  const star = QUESTIONS.find((q) => q.id === prep.starQuestion && prep.questions.includes(q.id));
+  const questions = QUESTIONS.filter((q) => prep.questions.includes(q.id) && q !== star).map((q) => q.label);
+  if (star || questions.length) {
+    sections.push({
+      heading: "Questions I'd like to ask",
+      text: star ? `My most important question is: ${star.label}` : undefined,
+      bullets: questions.length ? questions : undefined,
+    });
+  }
 
   const needs = pick(NEEDS, prep.needs);
   if (needs.length) sections.push({ heading: 'Things that help me in appointments', bullets: needs });

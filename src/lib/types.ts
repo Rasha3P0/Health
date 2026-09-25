@@ -36,6 +36,8 @@ export interface Period {
 export interface Prep {
   goals: string[];
   questions: string[];
+  /** The one question she marked as most important; the letter leads with it. */
+  starQuestion?: string;
   needs: string[];
   /** Up to three things bothering her most: her stated concern, not her readings. */
   symptoms: string[];

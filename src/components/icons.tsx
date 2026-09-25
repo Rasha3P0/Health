@@ -75,3 +75,9 @@ export const ShareIcon = (p: P) => (
     <path d="M12 3v12M8 7l4-4 4 4M8 10H6v10h12V10h-2" />
   </Svg>
 );
+
+export const StarIcon = ({ filled, ...p }: P & { filled?: boolean }) => (
+  <Svg {...p}>
+    <path d="m12 3.5 2.6 5.3 5.9.9-4.25 4.1 1 5.8L12 16.9l-5.25 2.7 1-5.8L3.5 9.7l5.9-.9z" fill={filled ? 'currentColor' : 'none'} />
+  </Svg>
+);

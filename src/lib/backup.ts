@@ -1,4 +1,5 @@
-import { DEFAULT_SETTINGS, EMPTY_PREP, type Snapshot } from './types';
+import { normalizePrep } from './prepMigrate';
+import { DEFAULT_SETTINGS, type Snapshot } from './types';
 
 // Backup file format. A plain JSON file she keeps (Files app, email to
 // herself, anywhere). It is the only way data leaves the device, and only
@@ -50,7 +51,7 @@ export function parseBackup(text: string): Snapshot {
     days,
     weeks,
     periods,
-    prep: { ...EMPTY_PREP, ...d.prep },
+    prep: normalizePrep(d.prep),
     settings: { ...DEFAULT_SETTINGS, ...d.settings, onboarded: true },
   };
 }

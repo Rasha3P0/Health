@@ -5,6 +5,7 @@ import { addDays, dayRange, daysBetween, isoWeek, weekStart } from '../src/lib/d
 import { buildSummary, MIN_READINGS_FOR_RANKING } from '../src/lib/summary';
 import { parseBackup, toBackup } from '../src/lib/backup';
 import { buildLetter, hasLetterContent, letterToText } from '../src/lib/letter';
+import { normalizePrep } from '../src/lib/prepMigrate';
 import { DEFAULT_SETTINGS, EMPTY_PREP, type DayEntry, type Period } from '../src/lib/types';
 
 describe('dates', () => {
@@ -170,14 +171,14 @@ describe('reasons in the summary', () => {
 });
 
 describe('letter', () => {
-  const prep = { ...EMPTY_PREP, goals: ['talk'], questions: ['q-tests'], needs: ['n-written'] };
+  const prep = { ...EMPTY_PREP, goals: ['talk'], questions: ['q-cause'], needs: ['n-written'] };
   const sealed: Period = { id: 'p', start: '2026-09-01', revealOn: '2026-10-01', kind: 'gp' };
 
   it('is built only from her choices', () => {
     const text = letterToText(buildLetter({ prep, today: '2026-09-10' }));
     expect(text).toContain('Dear Doctor,');
     expect(text).toContain('- Talk through these symptoms together');
-    expect(text).toContain('- Would tests help here, or is this assessed from symptoms?');
+    expect(text).toContain('- What do you think could be causing this, and would tests help or is it assessed from symptoms?');
     expect(text).toContain('- I take things in better in writing.');
     expect(hasLetterContent(EMPTY_PREP)).toBe(false);
   });
@@ -249,5 +250,21 @@ describe('letter: symptoms named up front', () => {
   });
   it('reads naturally with one symptom', () => {
     expect(letterToText(buildLetter({ prep: { ...EMPTY_PREP, symptoms: ['mood'] }, today: '2026-09-10' }))).toContain('The thing bothering me most is low mood.');
+  });
+});
+
+describe('questions: combined, starred, migrated', () => {
+  it('leads with the starred question, then the rest', () => {
+    const text = letterToText(buildLetter({ prep: { ...EMPTY_PREP, questions: ['q-cause', 'q-record', 'q-if-worse'], starQuestion: 'q-if-worse' }, today: '2026-09-10' }));
+    const star = text.indexOf("My most important question is: If it doesn't get better");
+    expect(star).toBeGreaterThan(0);
+    expect(star).toBeLessThan(text.indexOf('- What do you think could be causing this'));
+    expect(text.match(/If it doesn't get better/g)).toHaveLength(1);
+  });
+  it('keeps old picks by mapping them into the combined questions', () => {
+    const p = normalizePrep({ questions: ['q-tests', 'q-cause', 'q-watch', 'q-read'], starQuestion: 'q-read' });
+    expect(p.questions).toEqual(['q-cause', 'q-if-worse', 'q-record']);
+    expect(p.starQuestion).toBe('q-record');
+    expect(p.symptoms).toEqual([]);
   });
 });

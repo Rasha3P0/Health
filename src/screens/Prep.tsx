@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { MultiChoice, SingleChips } from '../components/controls';
-import { BackIcon, ChevronIcon, CloseIcon, EnvelopeIcon } from '../components/icons';
+import { BackIcon, CheckIcon, ChevronIcon, CloseIcon, EnvelopeIcon, StarIcon } from '../components/icons';
 import {
   CONTRACEPTION,
   DURATION,
@@ -12,6 +12,7 @@ import {
   MOTHER_AGE,
   NEEDS,
   QUESTIONS,
+  QUESTIONS_PLENTY,
   SYMPTOMS,
   SYMPTOMS_MAX,
   type LetterOption,
@@ -73,8 +74,6 @@ const STEPS: Step[] = [
 const MAIN_TOTAL = 9;
 const firstIndexOf = (main: number) => STEPS.findIndex((s) => s.main === main);
 
-/** A soft cap: ten minutes goes fast, but she is never blocked. */
-const QUESTIONS_PLENTY = 3;
 
 export function Prep() {
   const { snap, today } = useStore();
@@ -297,9 +296,8 @@ function PrepFlow({ start, onClose }: { start: number; onClose: () => void }) {
       {step.kind === 'questions' && (
         <>
           {title('Questions you might ask')}
-          <p class="quiet">Ten minutes goes fast. Pick two or three that matter most.</p>
-          <MultiChoice stacked label="Questions to ask" options={QUESTIONS} value={prep.questions} onChange={(questions) => set({ questions })} />
-          {prep.questions.length >= QUESTIONS_PLENTY && <p class="quiet plenty" role="status">Three is plenty for ten minutes.</p>}
+          <p class="quiet">Ten minutes goes fast. Pick the ones that matter, and tap the star on the most important.</p>
+          <QuestionPicker prep={prep} set={set} />
         </>
       )}
 
@@ -413,6 +411,49 @@ function RevealDate() {
             Yes, reveal now
           </button>
         </div>
+      )}
+    </>
+  );
+}
+
+// Tick questions, and star one to lead the letter. The star only shows on a picked question.
+function QuestionPicker({ prep, set }: { prep: PrepData; set: (patch: Partial<PrepData>) => void }) {
+  const toggle = (id: string) => {
+    const on = prep.questions.includes(id);
+    set({
+      questions: on ? prep.questions.filter((q) => q !== id) : [...prep.questions, id],
+      starQuestion: on && prep.starQuestion === id ? undefined : prep.starQuestion,
+    });
+  };
+  return (
+    <>
+      <div class="chips stacked" role="group" aria-label="Questions to ask">
+        {QUESTIONS.map((q) => {
+          const on = prep.questions.includes(q.id);
+          const starred = prep.starQuestion === q.id;
+          return (
+            <div key={q.id} class="question-row">
+              <button type="button" aria-pressed={on} class={`chip${on ? ' on' : ''}`} onClick={() => toggle(q.id)}>
+                <span class="box" aria-hidden="true">{on && <CheckIcon size={16} />}</span>
+                <span>{q.label}</span>
+              </button>
+              {on && (
+                <button
+                  type="button"
+                  class={`star${starred ? ' on' : ''}`}
+                  aria-pressed={starred}
+                  aria-label="Most important question"
+                  onClick={() => set({ starQuestion: starred ? undefined : q.id })}
+                >
+                  <StarIcon size={22} filled={starred} />
+                </button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      {prep.questions.length >= QUESTIONS_PLENTY && (
+        <p class="quiet plenty" role="status">That's plenty for ten minutes. Lots to cover? You can ask your practice for a double appointment.</p>
       )}
     </>
   );

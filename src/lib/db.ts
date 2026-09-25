@@ -1,3 +1,4 @@
+import { normalizePrep } from './prepMigrate';
 import { DEFAULT_SETTINGS, EMPTY_PREP, type DayEntry, type Period, type Prep, type Settings, type Snapshot, type WeekEntry } from './types';
 
 // On-device storage only. There is no server, no account and no sync: nothing
@@ -62,7 +63,7 @@ export async function loadAll(): Promise<Snapshot> {
     days,
     weeks,
     periods: periods ?? [],
-    prep: { ...EMPTY_PREP, ...prep },
+    prep: normalizePrep(prep),
     settings: { ...DEFAULT_SETTINGS, ...settings },
   };
 }
