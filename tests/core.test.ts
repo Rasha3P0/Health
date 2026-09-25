@@ -222,10 +222,10 @@ describe('letter: whole-person content', () => {
   });
 
   it('leaves background out when skipped or "prefer not to say"', () => {
-    const skipped = letterToText(buildLetter({ prep: { ...EMPTY_PREP, goals: ['talk'], contraception: 'skip', lastPeriod: 'skip', medication: 'skip' }, today: '2026-09-10' }));
+    const skipped = letterToText(buildLetter({ prep: { ...EMPTY_PREP, goals: ['talk'], contraception: 'skip', lastPeriod: 'skip', meds: ['skip'] }, today: '2026-09-10' }));
     expect(skipped).not.toContain('Background');
     expect(skipped).not.toMatch(/contraception/i);
-    const given = letterToText(buildLetter({ prep: { ...EMPTY_PREP, goals: ['talk'], contraception: 'not-relevant', medication: 'hrt' }, today: '2026-09-10' }));
+    const given = letterToText(buildLetter({ prep: { ...EMPTY_PREP, goals: ['talk'], contraception: 'not-relevant', meds: ['hrt'] }, today: '2026-09-10' }));
     expect(given).toContain("- Contraception isn't relevant to me.");
     expect(given).toContain("- I'm currently taking HRT.");
   });
@@ -266,5 +266,28 @@ describe('questions: combined, starred, migrated', () => {
     expect(p.questions).toEqual(['q-cause', 'q-if-worse', 'q-record']);
     expect(p.starQuestion).toBe('q-record');
     expect(p.symptoms).toEqual([]);
+  });
+});
+
+describe('letter: medication, supplements, HRT', () => {
+  const t = (meds: string[], supplements: string[] = []) =>
+    letterToText(buildLetter({ prep: { ...EMPTY_PREP, goals: ['talk'], meds, supplements }, today: '2026-09-10' }));
+  it('orders prescribed, then supplements, then HRT on its own line', () => {
+    const text = t(['hrt', 'gp', 'private'], ['vitd', 'magnesium', 'sleep']);
+    const a = text.indexOf('- My prescribed medication is on my record. Some is prescribed privately and may not be.');
+    const b = text.indexOf('- I also take vitamin D, magnesium and an over-the-counter sleep aid or antihistamine. These won\'t be on my record.');
+    const c = text.indexOf("- I'm currently taking HRT.");
+    expect(a).toBeGreaterThan(0);
+    expect(b).toBeGreaterThan(a);
+    expect(c).toBeGreaterThan(b);
+  });
+  it('handles private-only, none and prefer-not-to-say', () => {
+    expect(t(['private'])).toContain('I take medication prescribed privately, which may not be on my GP record.');
+    expect(t(['none'], ['iron'])).toContain("- I take iron. This won't be on my record.");
+    expect(t(['skip'], ['iron'])).not.toMatch(/iron|medication/);
+  });
+  it('converts the old single medication answer', () => {
+    expect(normalizePrep({ medication: 'both' }).meds).toEqual(['gp', 'hrt']);
+    expect(normalizePrep({ medication: 'hrt', meds: ['none'] }).meds).toEqual(['none']);
   });
 });

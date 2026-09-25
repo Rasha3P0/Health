@@ -48,7 +48,10 @@ export interface Prep {
   duration?: string;
   lastPeriod?: string;
   contraception?: string;
-  medication?: string;
+  /** Multi-select medication (replaces the old single `medication` answer). */
+  meds: string[];
+  /** Supplements and over-the-counter things, which aren't on her GP record. */
+  supplements: string[];
   /** Roughly when her mother's periods stopped. */
   motherAge?: string;
   /** Furthest Appointment step reached (1–8), so the tab can offer "Carry on". */
@@ -70,5 +73,5 @@ export interface Snapshot {
   settings: Settings;
 }
 
-export const EMPTY_PREP: Prep = { goals: [], questions: [], needs: [], symptoms: [], impact: [] };
+export const EMPTY_PREP: Prep = { goals: [], questions: [], needs: [], symptoms: [], impact: [], meds: [], supplements: [] };
 export const DEFAULT_SETTINGS: Settings = { enabledOptional: [], onboarded: false };

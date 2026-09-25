@@ -8,11 +8,14 @@ import {
   GOALS,
   IMPACT,
   LAST_PERIOD,
-  MEDICATION,
+  MEDS,
+  MEDS_EXCLUSIVE,
   MOTHER_AGE,
   NEEDS,
   QUESTIONS,
   QUESTIONS_PLENTY,
+  SUPPLEMENTS,
+  SUPPLEMENTS_EXCLUSIVE,
   SYMPTOMS,
   SYMPTOMS_MAX,
   type LetterOption,
@@ -36,15 +39,30 @@ const KINDS: { id: Period['kind']; label: string }[] = [
   { id: 'review', label: 'No appointment yet, just a review date' },
 ];
 
-type BgKey = 'duration' | 'lastPeriod' | 'contraception' | 'medication' | 'motherAge';
+type SingleKey = 'duration' | 'lastPeriod' | 'contraception' | 'motherAge';
+type MultiKey = 'meds' | 'supplements';
 
-const BACKGROUND: { key: BgKey; question: string; hint?: string; options: LetterOption[] }[] = [
+type BgScreen =
+  | { key: SingleKey; multi?: false; question: string; hint?: string; options: LetterOption[] }
+  | { key: MultiKey; multi: true; question: string; hint?: string; options: { id: string; label: string }[]; exclusive: string[] };
+
+// Self first: her own health and history, then reproductive items lower.
+const BACKGROUND: BgScreen[] = [
   { key: 'duration', question: 'How long has this been going on?', options: DURATION },
+  { key: 'meds', multi: true, question: 'Do you take any regular medication?', hint: 'Pick any that apply.', options: MEDS, exclusive: MEDS_EXCLUSIVE },
+  {
+    key: 'supplements',
+    multi: true,
+    question: 'Anything you take that your GP might not know about?',
+    hint: "Supplements and things bought over the counter aren't on your GP record.",
+    options: SUPPLEMENTS,
+    exclusive: SUPPLEMENTS_EXCLUSIVE,
+  },
+  { key: 'motherAge', question: "About what age did your mother's periods stop, if you know?", options: MOTHER_AGE },
   { key: 'lastPeriod', question: 'When was your last period?', options: LAST_PERIOD },
   { key: 'contraception', question: 'Contraception', hint: 'Answering here can stop it taking up appointment time.', options: CONTRACEPTION },
-  { key: 'medication', question: 'Do you take any regular medication?', options: MEDICATION },
-  { key: 'motherAge', question: "About what age did your mother's periods stop, if you know?", options: MOTHER_AGE },
 ];
+const answered = (prep: PrepData, bg: BgScreen) => (bg.multi ? prep[bg.key].length > 0 : !!prep[bg.key]);
 
 type Step =
   | { main: 1; kind: 'date' }
@@ -135,7 +153,7 @@ function Summary({ onEdit }: { onEdit: (main: number) => void }) {
     return picked.length <= 2 ? picked.join(', ') : `${picked.slice(0, 2).join(', ')} and ${picked.length - 2} more`;
   };
   const counted = (n: number) => (n ? `${n} picked` : '');
-  const bgAnswered = BACKGROUND.filter((b) => prep[b.key]).length;
+  const bgAnswered = BACKGROUND.filter((b) => answered(prep, b)).length;
   const rows: { main: number; label: string; value: string }[] = [
     { main: 1, label: 'Date', value: period ? `${formatDay(period.revealOn)} · ${KINDS.find((k) => k.id === period.kind)?.label ?? ''}` : '' },
     { main: 2, label: 'Bothering you most', value: names(SYMPTOMS, prep.symptoms) },
@@ -201,7 +219,7 @@ function PrepFlow({ start, onClose }: { start: number; onClose: () => void }) {
   const set = (patch: Partial<PrepData>) => setPrep({ ...prepRef.current, ...patch });
 
   const isLast = i === STEPS.length - 1;
-  const single = step.kind === 'getback' || step.kind === 'bg';
+  const single = step.kind === 'getback' || (step.kind === 'bg' && !step.bg.multi);
   const title = (words: string) => <h1 class="question" tabIndex={-1} ref={heading}>{words}</h1>;
 
   return (
@@ -258,8 +276,8 @@ function PrepFlow({ start, onClose }: { start: number; onClose: () => void }) {
         <>
           {title('A little background')}
           <p class="quiet">
-            Optional. {BACKGROUND.length} quick taps that save time in the room: how long this has been going on, your last period,
-            contraception, medication and family history. Anything you skip stays out of the letter.
+            Optional. {BACKGROUND.length} quick screens that save time in the room: how long this has been going on, medication and
+            supplements, family history, your last period and contraception. Anything you skip stays out of the letter.
           </p>
           <div class="stack-buttons">
             <button class="primary big" onClick={next}>Answer these</button>
@@ -273,15 +291,26 @@ function PrepFlow({ start, onClose }: { start: number; onClose: () => void }) {
         <>
           {title(step.bg.question)}
           {step.bg.hint && <p class="quiet">{step.bg.hint}</p>}
-          <SingleChips
-            label={step.bg.question}
-            options={step.bg.options}
-            value={prep[step.bg.key]}
-            onChange={(v) => {
-              set({ [step.bg.key]: v });
-              if (v) advanceSoon();
-            }}
-          />
+          {step.bg.multi ? (
+            <MultiChoice
+              stacked
+              label={step.bg.question}
+              options={step.bg.options}
+              exclusive={step.bg.exclusive}
+              value={prep[step.bg.key]}
+              onChange={(v) => set({ [step.bg.key]: v })}
+            />
+          ) : (
+            <SingleChips
+              label={step.bg.question}
+              options={step.bg.options}
+              value={prep[step.bg.key]}
+              onChange={(v) => {
+                set({ [step.bg.key]: v });
+                if (v) advanceSoon();
+              }}
+            />
+          )}
         </>
       )}
 

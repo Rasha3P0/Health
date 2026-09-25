@@ -113,13 +113,33 @@ export const MOTHER_AGE: LetterOption[] = [
   { id: 'skip', label: 'Prefer not to say', letter: '' },
 ];
 
-export const MEDICATION: LetterOption[] = [
-  { id: 'none', label: 'Nothing regular', letter: "I'm not taking any regular medication." },
-  { id: 'hrt', label: 'HRT', letter: "I'm currently taking HRT." },
-  { id: 'other', label: 'Other medication', letter: 'I take other prescribed medication and have the list with me.' },
-  { id: 'both', label: 'HRT and other medication', letter: "I'm taking HRT and other prescribed medication, and have the list with me." },
+// Multi-select. HRT is listed after other medication on purpose: leading with it
+// frames everything as menopause before the GP has considered other causes.
+// "Nothing regular" and "Prefer not to say" each clear the others.
+export const MEDS: Option[] = [
+  { id: 'none', label: 'Nothing regular' },
+  { id: 'gp', label: 'Prescribed medication (on my GP record)' },
+  { id: 'private', label: 'Prescribed privately (may not be on my GP record)' },
+  { id: 'hrt', label: 'HRT' },
+  { id: 'skip', label: 'Prefer not to say' },
+];
+export const MEDS_EXCLUSIVE = ['none', 'skip'];
+
+// Not on her GP record, so worth stating. Informational only: the app never
+// comments on interactions or suitability.
+export const SUPPLEMENTS: LetterOption[] = [
+  { id: 'none', label: 'None', letter: '' },
+  { id: 'vitd', label: 'Vitamin D', letter: 'vitamin D' },
+  { id: 'iron', label: 'Iron', letter: 'iron' },
+  { id: 'magnesium', label: 'Magnesium', letter: 'magnesium' },
+  { id: 'vitamins', label: 'Other vitamins or minerals', letter: 'other vitamins or minerals' },
+  { id: 'herbal', label: 'Herbal remedies', letter: 'herbal remedies' },
+  { id: 'sleep', label: 'Sleep aids or antihistamines', letter: 'an over-the-counter sleep aid or antihistamine' },
+  { id: 'painkillers', label: 'Painkillers most days', letter: 'painkillers most days' },
+  { id: 'other', label: 'Other', letter: 'other things bought over the counter' },
   { id: 'skip', label: 'Prefer not to say', letter: '' },
 ];
+export const SUPPLEMENTS_EXCLUSIVE = ['none', 'skip'];
 
 // Combined in natural pairs so she can cover more in fewer, fuller questions.
 export const QUESTIONS: Option[] = [

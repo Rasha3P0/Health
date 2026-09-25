@@ -42,10 +42,16 @@ export function MultiChoice(props: {
   stacked?: boolean;
   /** Once this many are picked, the rest wait until she unpicks one. */
   max?: number;
+  /** Options like "None" or "Prefer not to say" that clear the others (and are cleared by them). */
+  exclusive?: string[];
 }) {
-  const { label, options, value, onChange, stacked, max } = props;
+  const { label, options, value, onChange, stacked, max, exclusive = [] } = props;
   const full = max !== undefined && value.length >= max;
-  const toggle = (id: string) => onChange(value.includes(id) ? value.filter((v) => v !== id) : [...value, id]);
+  const toggle = (id: string) => {
+    if (value.includes(id)) return onChange(value.filter((v) => v !== id));
+    if (exclusive.includes(id)) return onChange([id]);
+    onChange([...value.filter((v) => !exclusive.includes(v)), id]);
+  };
   return (
     <div class={`chips${stacked ? ' stacked' : ''}`} role="group" aria-label={label}>
       {options.map((o) => {
