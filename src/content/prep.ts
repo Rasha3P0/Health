@@ -16,13 +16,13 @@ export interface LetterOption extends Option {
 }
 
 // Specific asks first. "Talk through" stays as the general fallback.
+// Goals and QUESTIONS don't overlap: tests live only in QUESTIONS, options only in GOALS.
 export const GOALS: Option[] = [
   { id: 'treatment', label: 'Discuss treatment options, including HRT' },
   { id: 'cause', label: "Understand what's behind this, and check for other causes" },
   { id: 'sleep-help', label: 'Get help with my sleep' },
   { id: 'mood-help', label: 'Get help with my mood' },
   { id: 'options', label: 'Hear all my options, including not treating it' },
-  { id: 'tests', label: 'Understand whether tests are needed' },
   { id: 'referral', label: 'Ask whether a referral would help' },
   { id: 'review', label: 'Review something I already take' },
   { id: 'plan', label: 'Leave with a clear next step and a follow-up plan' },
@@ -90,7 +90,6 @@ export const MEDICATION: LetterOption[] = [
 
 export const QUESTIONS: Option[] = [
   { id: 'q-cause', label: 'What do you think could be causing this?' },
-  { id: 'q-options', label: 'What are my options, including waiting and seeing?' },
   // Age-neutral on purpose: NICE NG23 generally diagnoses perimenopause from symptoms over 45, so
   // "would tests help?" can backfire. This works at any age without asking hers. Clinician to confirm.
   { id: 'q-tests', label: 'Would tests help here, or is this assessed from symptoms?' },
