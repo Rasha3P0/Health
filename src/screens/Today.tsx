@@ -55,7 +55,7 @@ export function Today() {
         <section class="hero-card">
           <h2>{answered > 0 ? 'Pick up where you left off' : "Today's check-in"}</h2>
           <p>
-            {answered > 0 ? `${answered} of ${total} answered.` : `${total} quick taps, about 30 seconds.`} Skip anything you like.
+            {answered > 0 ? `${answered} of ${total} answered.` : `${total} quick questions, about 30 seconds.`} Skip anything you like.
           </p>
           <button class="primary big" onClick={() => setFlowDate(today)}>
             {answered > 0 ? 'Carry on' : 'Start'}
@@ -143,6 +143,8 @@ function CheckIn({ date, onClose }: { date: DayKey; onClose: () => void }) {
   const stepsRef = useRef(steps);
   stepsRef.current = steps;
   const step = steps[Math.min(i, steps.length - 1)];
+  // Follow-ups count as part of the question they follow, so the total never changes mid-check-in.
+  const pos = steps.slice(0, Math.min(i, steps.length - 1) + 1).filter((st) => st.kind !== 'reasons').length;
 
   useEffect(() => {
     heading.current?.focus();
@@ -193,13 +195,13 @@ function CheckIn({ date, onClose }: { date: DayKey; onClose: () => void }) {
     <main class="wrap flow" id="main">
       <div class="flow-top">
         <button class="icon-btn" aria-label="Close check-in" onClick={onClose}><CloseIcon /></button>
-        <div class="progress" role="progressbar" aria-valuemin={1} aria-valuemax={steps.length} aria-valuenow={i + 1} aria-label={`Question ${i + 1} of ${steps.length}`}>
-          {steps.map((_, n) => <span key={n} class={n < i ? 'done' : n === i ? 'now' : ''} />)}
+        <div class="progress" role="progressbar" aria-valuemin={1} aria-valuemax={baseSteps.length} aria-valuenow={pos} aria-label={`Question ${pos} of ${baseSteps.length}`}>
+          {baseSteps.map((_, n) => <span key={n} class={n < pos - 1 ? 'done' : n === pos - 1 ? 'now' : ''} />)}
         </div>
-        <span class="count">{i + 1}/{steps.length}</span>
+        <span class="count">{pos}/{baseSteps.length}</span>
       </div>
 
-      <p class="eyebrow">{dayLabel}</p>
+      <p class="eyebrow">{step.kind === 'reasons' ? `${dayLabel} · follow-up` : dayLabel}</p>
 
       {step.kind === 'scale' && (
         <>
