@@ -238,3 +238,16 @@ describe('letter: family context', () => {
     expect(t('skip')).not.toContain('mother');
   });
 });
+
+describe('letter: symptoms named up front', () => {
+  it('names what is bothering her, straight after the opening, even while the record is sealed', () => {
+    const sealed: Period = { id: 'p', start: '2026-09-01', revealOn: '2026-10-01', kind: 'gp' };
+    const text = letterToText(buildLetter({ prep: { ...EMPTY_PREP, symptoms: ['fog', 'energy', 'sleep'] }, today: '2026-09-10', period: sealed }));
+    // Listed in the chip order, whatever order she tapped them in.
+    expect(text).toContain("The things bothering me most are low energy, poor sleep and brain fog.");
+    expect(text.indexOf('bothering me most')).toBeLessThan(text.indexOf('stays sealed'));
+  });
+  it('reads naturally with one symptom', () => {
+    expect(letterToText(buildLetter({ prep: { ...EMPTY_PREP, symptoms: ['mood'] }, today: '2026-09-10' }))).toContain('The thing bothering me most is low mood.');
+  });
+});

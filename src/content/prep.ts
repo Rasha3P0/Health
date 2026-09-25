@@ -47,6 +47,25 @@ export const IMPACT: LetterOption[] = [
   { id: 'caring', label: 'Parenting or caring', letter: 'parenting or caring for others' },
 ];
 
+/**
+ * What she wants to talk about. Her stated concern, not her readings, so it can
+ * name symptoms in the letter without breaking the seal.
+ */
+export const SYMPTOMS: LetterOption[] = [
+  { id: 'energy', label: 'Energy', letter: 'low energy' },
+  { id: 'sleep', label: 'Sleep', letter: 'poor sleep' },
+  { id: 'fog', label: 'Thinking clearly or brain fog', letter: 'brain fog' },
+  { id: 'mood', label: 'Mood', letter: 'low mood' },
+  { id: 'anxiety', label: 'Anxiety', letter: 'anxiety' },
+  { id: 'aches', label: 'Aches or joint pain', letter: 'aches or joint pain' },
+  { id: 'flushes', label: 'Hot flushes or night sweats', letter: 'hot flushes or night sweats' },
+  { id: 'headaches', label: 'Headaches', letter: 'headaches' },
+  { id: 'overload', label: 'Feeling overloaded', letter: 'feeling overloaded' },
+  { id: 'libido', label: 'Sex drive', letter: 'low sex drive' },
+  { id: 'bleeding', label: 'Bleeding', letter: 'bleeding' },
+];
+export const SYMPTOMS_MAX = 3;
+
 /** Opens the letter: "I'd like to get back to …". */
 export const GET_BACK: LetterOption[] = [
   { id: 'myself', label: 'Feeling like myself', letter: 'feeling like myself' },

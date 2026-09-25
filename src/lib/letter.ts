@@ -1,4 +1,4 @@
-import { CONTRACEPTION, DURATION, GET_BACK, GOALS, IMPACT, LAST_PERIOD, MEDICATION, MOTHER_AGE, NEEDS, QUESTIONS, type LetterOption } from '../content/prep';
+import { CONTRACEPTION, DURATION, GET_BACK, GOALS, SYMPTOMS, IMPACT, LAST_PERIOD, MEDICATION, MOTHER_AGE, NEEDS, QUESTIONS, type LetterOption } from '../content/prep';
 import { formatDay, type DayKey } from './dates';
 import type { Summary } from './summary';
 import type { Period, Prep } from './types';
@@ -33,7 +33,7 @@ function list(items: string[]): string {
 }
 
 export function hasLetterContent(prep: Prep): boolean {
-  return prep.goals.length + prep.questions.length + prep.needs.length + prep.impact.length > 0 || !!prep.getBackTo;
+  return prep.goals.length + prep.questions.length + prep.needs.length + prep.impact.length + prep.symptoms.length > 0 || !!prep.getBackTo;
 }
 
 /** The letter line for a single-pick answer, or nothing if skipped or "prefer not to say". */
@@ -55,7 +55,14 @@ export function buildLetter(args: {
   const opener = back
     ? `I'd like to get back to ${back}. I've booked this appointment because my symptoms are getting in the way of that, and I've written this down so we can make the most of the time.`
     : "I've booked this appointment to talk about how I've been feeling. I've written this down so we can make the most of the time and so I don't forget anything important.";
-  sections.push({ text: [opener, line(DURATION, prep.duration)].filter(Boolean).join(' ') });
+  // Name what the appointment is about, so it's clear even before the record opens.
+  const symptoms = SYMPTOMS.filter((o) => prep.symptoms.includes(o.id)).map((o) => o.letter);
+  const bothering = !symptoms.length
+    ? ''
+    : symptoms.length === 1
+      ? `The thing bothering me most is ${symptoms[0]}.`
+      : `The things bothering me most are ${list(symptoms)}.`;
+  sections.push({ text: [opener, bothering, line(DURATION, prep.duration)].filter(Boolean).join(' ') });
 
   // What it's costing her comes before any symptom numbers.
   const impact = IMPACT.filter((o) => prep.impact.includes(o.id)).map((o) => o.letter);

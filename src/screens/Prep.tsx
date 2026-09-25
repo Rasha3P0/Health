@@ -12,6 +12,8 @@ import {
   MOTHER_AGE,
   NEEDS,
   QUESTIONS,
+  SYMPTOMS,
+  SYMPTOMS_MAX,
   type LetterOption,
 } from '../content/prep';
 import { currentPeriod, nextPeriodStart } from '../lib/blind';
@@ -45,28 +47,30 @@ const BACKGROUND: { key: BgKey; question: string; hint?: string; options: Letter
 
 type Step =
   | { main: 1; kind: 'date' }
-  | { main: 2; kind: 'impact' }
-  | { main: 3; kind: 'getback' }
-  | { main: 4; kind: 'bg-intro' }
-  | { main: 4; kind: 'bg'; bg: (typeof BACKGROUND)[number] }
-  | { main: 5; kind: 'goals' }
-  | { main: 6; kind: 'questions' }
-  | { main: 7; kind: 'needs' }
-  | { main: 8; kind: 'letter' };
+  | { main: 2; kind: 'symptoms' }
+  | { main: 3; kind: 'impact' }
+  | { main: 4; kind: 'getback' }
+  | { main: 5; kind: 'bg-intro' }
+  | { main: 5; kind: 'bg'; bg: (typeof BACKGROUND)[number] }
+  | { main: 6; kind: 'goals' }
+  | { main: 7; kind: 'questions' }
+  | { main: 8; kind: 'needs' }
+  | { main: 9; kind: 'letter' };
 
-// Background screens count under step 4, like check-in follow-ups, so the total never changes.
+// Background screens count under step 5, like check-in follow-ups, so the total never changes.
 const STEPS: Step[] = [
   { main: 1, kind: 'date' },
-  { main: 2, kind: 'impact' },
-  { main: 3, kind: 'getback' },
-  { main: 4, kind: 'bg-intro' },
-  ...BACKGROUND.map((bg) => ({ main: 4 as const, kind: 'bg' as const, bg })),
-  { main: 5, kind: 'goals' },
-  { main: 6, kind: 'questions' },
-  { main: 7, kind: 'needs' },
-  { main: 8, kind: 'letter' },
+  { main: 2, kind: 'symptoms' },
+  { main: 3, kind: 'impact' },
+  { main: 4, kind: 'getback' },
+  { main: 5, kind: 'bg-intro' },
+  ...BACKGROUND.map((bg) => ({ main: 5 as const, kind: 'bg' as const, bg })),
+  { main: 6, kind: 'goals' },
+  { main: 7, kind: 'questions' },
+  { main: 8, kind: 'needs' },
+  { main: 9, kind: 'letter' },
 ];
-const MAIN_TOTAL = 8;
+const MAIN_TOTAL = 9;
 const firstIndexOf = (main: number) => STEPS.findIndex((s) => s.main === main);
 
 /** A soft cap: ten minutes goes fast, but she is never blocked. */
@@ -86,7 +90,7 @@ export function Prep() {
         <h1>Your appointment</h1>
         <section class="hero-card">
           <h2>Get ready for it</h2>
-          <p>8 short steps, about 3 minutes. They build a letter you can hand over or send ahead. Skip anything you like.</p>
+          <p>{MAIN_TOTAL} short steps, about 3 minutes. They build a letter you can hand over or send ahead. Skip anything you like.</p>
           <button class="primary big" onClick={() => setFlowAt(0)}>Start</button>
         </section>
       </main>
@@ -135,12 +139,13 @@ function Summary({ onEdit }: { onEdit: (main: number) => void }) {
   const bgAnswered = BACKGROUND.filter((b) => prep[b.key]).length;
   const rows: { main: number; label: string; value: string }[] = [
     { main: 1, label: 'Date', value: period ? `${formatDay(period.revealOn)} · ${KINDS.find((k) => k.id === period.kind)?.label ?? ''}` : '' },
-    { main: 2, label: 'Getting in the way of', value: names(IMPACT, prep.impact) },
-    { main: 3, label: 'Most want back', value: GET_BACK.find((o) => o.id === prep.getBackTo)?.label ?? '' },
-    { main: 4, label: 'Background', value: bgAnswered ? `${bgAnswered} of ${BACKGROUND.length} answered` : '' },
-    { main: 5, label: 'What you want from it', value: counted(prep.goals.length) },
-    { main: 6, label: 'Questions', value: counted(prep.questions.length) },
-    { main: 7, label: 'What helps you', value: counted(prep.needs.length) },
+    { main: 2, label: 'Bothering you most', value: names(SYMPTOMS, prep.symptoms) },
+    { main: 3, label: 'Getting in the way of', value: names(IMPACT, prep.impact) },
+    { main: 4, label: 'Most want back', value: GET_BACK.find((o) => o.id === prep.getBackTo)?.label ?? '' },
+    { main: 5, label: 'Background', value: bgAnswered ? `${bgAnswered} of ${BACKGROUND.length} answered` : '' },
+    { main: 6, label: 'What you want from it', value: counted(prep.goals.length) },
+    { main: 7, label: 'Questions', value: counted(prep.questions.length) },
+    { main: 8, label: 'What helps you', value: counted(prep.needs.length) },
   ];
   return (
     <section class="card summary-list" aria-label="Your answers">
@@ -218,6 +223,14 @@ function PrepFlow({ start, onClose }: { start: number; onClose: () => void }) {
         </>
       )}
 
+      {step.kind === 'symptoms' && (
+        <>
+          {title("What's bothering you most?")}
+          <p class="quiet">Pick up to three. This is what you want to talk about. Your daily readings stay sealed.</p>
+          <MultiChoice stacked max={SYMPTOMS_MAX} label="What's bothering me most" options={SYMPTOMS} value={prep.symptoms} onChange={(symptoms) => set({ symptoms })} />
+        </>
+      )}
+
       {step.kind === 'impact' && (
         <>
           {title('What is this getting in the way of?')}
@@ -251,7 +264,7 @@ function PrepFlow({ start, onClose }: { start: number; onClose: () => void }) {
           </p>
           <div class="stack-buttons">
             <button class="primary big" onClick={next}>Answer these</button>
-            <button class="big" onClick={() => go(firstIndexOf(5))}>Skip all background</button>
+            <button class="big" onClick={() => go(firstIndexOf(6))}>Skip all background</button>
             <button class="ghost" onClick={() => go(i - 1)}><BackIcon size={18} /> Back</button>
           </div>
         </>

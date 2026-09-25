@@ -11,6 +11,7 @@ All health-adjacent copy is **draft** until it has been checked against current 
 | 5 | Scale questions, hints and answer words (10 scales) | `src/content/fields.ts` | Are these the right set for perimenopause in ND women? Is the wording neutral? Do the five answers read as one step apart? Is the libido wording acceptable? | Draft |
 | 5b | "What was behind it?" reasons for sleep and mood | `fields.ts` → `reasons` | Are the common contributors covered without implying a cause? | Draft |
 | 6 | Weekly "what else changed" options | `fields.ts` → `WEEKLY_CHANGES` | Are the common confounds covered? | Draft |
+| 6b | "What's bothering you most?" symptom chips and their letter wording | `prep.ts` → `SYMPTOMS` | Her stated concern, not her readings. Is the list complete for the beta group? | Draft |
 | 7 | Appointment goals | `src/content/prep.ts` → `GOALS` | Informs, doesn't advise, doesn't set her against the GP. | Draft |
 | 8 | Questions to ask | `prep.ts` → `QUESTIONS` | Same as #7. Especially "If you don't think this needs treating, could you explain why?" The tests question is deliberately age-neutral: **check it against the current NICE NG23 menopause guideline** (symptom-based diagnosis over 45) before going public. | Draft |
 | 8b | Impact, "get back to", duration, last period, contraception, medication | `prep.ts` | Contraception must read as a time-saver, not re-centre fertility. "Prefer not to say" leaves the line out. Wording on the periods options. | Draft |

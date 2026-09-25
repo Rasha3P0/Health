@@ -37,6 +37,8 @@ export interface Prep {
   goals: string[];
   questions: string[];
   needs: string[];
+  /** Up to three things bothering her most: her stated concern, not her readings. */
+  symptoms: string[];
   /** What the symptoms are getting in the way of. */
   impact: string[];
   /** One pick: "I'd like to get back to …". */
@@ -66,5 +68,5 @@ export interface Snapshot {
   settings: Settings;
 }
 
-export const EMPTY_PREP: Prep = { goals: [], questions: [], needs: [], impact: [] };
+export const EMPTY_PREP: Prep = { goals: [], questions: [], needs: [], symptoms: [], impact: [] };
 export const DEFAULT_SETTINGS: Settings = { enabledOptional: [], onboarded: false };

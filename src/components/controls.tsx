@@ -40,15 +40,18 @@ export function MultiChoice(props: {
   value: string[];
   onChange: (v: string[]) => void;
   stacked?: boolean;
+  /** Once this many are picked, the rest wait until she unpicks one. */
+  max?: number;
 }) {
-  const { label, options, value, onChange, stacked } = props;
+  const { label, options, value, onChange, stacked, max } = props;
+  const full = max !== undefined && value.length >= max;
   const toggle = (id: string) => onChange(value.includes(id) ? value.filter((v) => v !== id) : [...value, id]);
   return (
     <div class={`chips${stacked ? ' stacked' : ''}`} role="group" aria-label={label}>
       {options.map((o) => {
         const on = value.includes(o.id);
         return (
-          <button key={o.id} type="button" aria-pressed={on} class={`chip${on ? ' on' : ''}`} onClick={() => toggle(o.id)}>
+          <button key={o.id} type="button" aria-pressed={on} disabled={full && !on} class={`chip${on ? ' on' : ''}`} onClick={() => toggle(o.id)}>
             {stacked && <span class="box" aria-hidden="true">{on && <CheckIcon size={16} />}</span>}
             <span>{o.label}</span>
           </button>
