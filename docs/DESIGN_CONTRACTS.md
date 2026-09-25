@@ -36,9 +36,14 @@ Every input is a tap. There are no text boxes anywhere, not even "notes". Prose 
 
 ## 6. One direction, no decoding
 
-Every scale runs the same way, and every step has a word: Not at all / A little / Somewhat / A lot / Very much, with a small bar meter beside each. There's nothing to work out on a foggy day. Tapping a selected answer again clears it.
+Every question has its own answer words ("How did you sleep?" → Well / OK / Not great / Badly / Barely at all), but they always run the same way: 1 = no problem, 5 = the worst. A small bar meter beside each answer shows the step. There's nothing to work out on a foggy day. Tapping a selected answer again clears it.
+
+When sleep or mood is answered "Not great"/"A bit low" or worse, one follow-up asks what was behind it, as tick boxes. Those reasons are her own and sealed like the reading.
 
 ## 7. Descriptive, never interpretive
+
+The letter to her clinician is a fixed template filled in from her choices. It is not AI, so nothing can be invented. Before the reveal date it says a sealed record exists and never quotes it.
+
 
 The summary is counts and averages of what she recorded. It never suggests a cause, diagnosis or treatment. "Most affected" is simply the highest averages, and only includes fields with at least 7 readings.
 

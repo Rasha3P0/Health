@@ -261,6 +261,27 @@ input[type='date'] {
 .field legend { padding: 0; margin-bottom: 0.5rem; }
 .field-label { font-weight: 700; display: block; }
 
+/* ---------- Letter ---------- */
+.back { display: inline-flex; align-items: center; gap: 0.25rem; min-height: 44px; text-decoration: none; font-weight: 700; margin-top: 0.5rem; }
+.letter-card {
+  display: flex; align-items: center; gap: 0.9rem; margin: 1.25rem 0; padding: 1.1rem;
+  background: linear-gradient(150deg, var(--accent-soft), var(--sun-soft)); border-radius: var(--radius);
+  color: var(--ink); text-decoration: none;
+}
+.letter-card .sealed-icon { color: var(--accent); }
+.letter-card.muted { background: var(--surface); border: 1.5px dashed var(--line); }
+.letter-actions button { flex: 1; min-width: 7rem; }
+.letter {
+  background: var(--surface); border-radius: 6px; box-shadow: var(--shadow);
+  border: 1px solid var(--line); padding: 1.5rem 1.25rem; margin: 1rem 0;
+  font-size: 1rem; line-height: 1.6;
+}
+.letter h2 { font-family: var(--text); font-size: 1rem; font-weight: 700; margin: 1rem 0 0.2rem; letter-spacing: 0; }
+.letter ul { padding-left: 1.2rem; margin: 0.2rem 0; }
+.letter .sign { margin-top: 1.25rem; }
+.letter .fill { display: grid; gap: 1.1rem; margin-top: 2.2rem; }
+.letter .fill span { border-top: 1px solid var(--muted); padding-top: 0.2rem; font-size: 0.8rem; color: var(--muted); }
+
 /* ---------- Welcome ---------- */
 .welcome { padding-bottom: 2rem; }
 .welcome-hero {
@@ -329,7 +350,7 @@ table.weeks { border-collapse: collapse; font-size: 0.85rem; min-width: 100%; }
   body { padding: 0; font-size: 11pt; background: #fff; }
   .no-print, .tabs, .top, .foot { display: none !important; }
   .wrap { max-width: none; padding: 0; }
-  .sheet { border: 0; padding: 0; margin: 0; }
+  .sheet, .letter { border: 0; padding: 0; margin: 0; box-shadow: none; font-size: 12pt; }
   .table-scroll { overflow: visible; }
   .weeks th[scope='row'] { position: static; }
   .weeks td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }

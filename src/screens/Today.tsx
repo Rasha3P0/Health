@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { InstallNotice } from '../components/chrome';
 import { MultiChoice, OptionStack } from '../components/controls';
 import { BackIcon, CheckIcon, ChevronIcon, CloseIcon, EnvelopeIcon } from '../components/icons';
@@ -7,7 +7,7 @@ import {
   activeScaleFields,
   BLEEDING_EMPHASISE,
   BLEEDING_FIELD,
-  SCALE_LABELS,
+  REASONS_FROM,
   SCALE_VALUES,
   WEEKLY_CHANGES,
   WEEKLY_NOTHING,
@@ -20,7 +20,7 @@ import { useStore } from '../store';
 // Today is a front door, not a form. One card invites her into a check-in
 // that asks one thing at a time; everything else stays out of the way.
 
-type Step = { kind: 'scale'; field: ScaleField } | { kind: 'bleeding' } | { kind: 'weekly' };
+type Step = { kind: 'scale'; field: ScaleField } | { kind: 'reasons'; field: ScaleField } | { kind: 'bleeding' } | { kind: 'weekly' };
 
 export function Today() {
   const { snap, today, yesterday } = useStore();
@@ -116,11 +116,11 @@ function SealedCard() {
 }
 
 function CheckIn({ date, onClose }: { date: DayKey; onClose: () => void }) {
-  const { snap, today, setScale, setBleeding, setWeekChanges, finishDay } = useStore();
+  const { snap, today, setScale, setReasons, setBleeding, setWeekChanges, finishDay } = useStore();
   const fields = activeScaleFields(snap.settings.enabledOptional);
   const weekAnswered = snap.weeks.some((w) => w.week === isoWeek(today));
   // The weekly question is dealt only on today's check-in and only until answered.
-  const [steps] = useState<Step[]>(() => [
+  const [baseSteps] = useState<Step[]>(() => [
     ...fields.map((field) => ({ kind: 'scale' as const, field })),
     { kind: 'bleeding' as const },
     ...(date === today && !weekAnswered ? [{ kind: 'weekly' as const }] : []),
@@ -130,7 +130,19 @@ function CheckIn({ date, onClose }: { date: DayKey; onClose: () => void }) {
   const timer = useRef<number>();
   const heading = useRef<HTMLHeadingElement>(null);
   const entry = snap.days.find((d) => d.date === date);
-  const step = steps[i];
+  // "What was behind it?" is dealt in straight after a question answered as a problem.
+  const steps = useMemo(
+    () =>
+      baseSteps.flatMap((st): Step[] =>
+        st.kind === 'scale' && st.field.reasons && (entry?.scales[st.field.id] ?? 0) >= REASONS_FROM
+          ? [st, { kind: 'reasons', field: st.field }]
+          : [st],
+      ),
+    [baseSteps, entry],
+  );
+  const stepsRef = useRef(steps);
+  stepsRef.current = steps;
+  const step = steps[Math.min(i, steps.length - 1)];
 
   useEffect(() => {
     heading.current?.focus();
@@ -145,9 +157,12 @@ function CheckIn({ date, onClose }: { date: DayKey; onClose: () => void }) {
     };
   }, []);
 
+  const iRef = useRef(i);
+  iRef.current = i;
+  // Reads refs so a delayed auto-advance sees any follow-up step just added.
   const next = () => {
     clearTimeout(timer.current);
-    if (i < steps.length - 1) setI(i + 1);
+    if (iRef.current < stepsRef.current.length - 1) setI(iRef.current + 1);
     else {
       finishDay(date);
       setFinished(true);
@@ -192,12 +207,26 @@ function CheckIn({ date, onClose }: { date: DayKey; onClose: () => void }) {
           <p class="quiet">{step.field.hint}</p>
           <OptionStack
             label={step.field.label}
-            options={SCALE_VALUES.map((n) => ({ value: String(n), label: SCALE_LABELS[n], level: n }))}
+            options={SCALE_VALUES.map((n) => ({ value: String(n), label: step.field.answers[n - 1], level: n }))}
             value={entry?.scales[step.field.id]?.toString()}
             onChange={(v) => {
               setScale(date, step.field.id, v ? Number(v) : undefined);
               if (v) advanceSoon();
             }}
+          />
+        </>
+      )}
+
+      {step.kind === 'reasons' && step.field.reasons && (
+        <>
+          <h1 class="question" tabIndex={-1} ref={heading}>{step.field.reasons.question}</h1>
+          <p class="quiet">Tick any that fit. Only you know, and it helps spot what's driving it.</p>
+          <MultiChoice
+            stacked
+            label={step.field.reasons.question}
+            options={step.field.reasons.options}
+            value={entry?.reasons?.[step.field.id] ?? []}
+            onChange={(ids) => setReasons(date, step.field.id, ids)}
           />
         </>
       )}

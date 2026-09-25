@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
 import { Footer, Header, Nav, type Route } from './components/chrome';
+import { LetterScreen } from './screens/Letter';
 import { More } from './screens/More';
 import { Prep } from './screens/Prep';
 import { Record } from './screens/Record';
@@ -7,7 +8,7 @@ import { Today } from './screens/Today';
 import { Welcome } from './screens/Welcome';
 import { StoreProvider, useStore } from './store';
 
-const ROUTES: Route[] = ['today', 'prep', 'record', 'more'];
+const ROUTES: Route[] = ['today', 'prep', 'record', 'more', 'letter'];
 
 function readRoute(): Route {
   const r = location.hash.replace(/^#\/?/, '') as Route;
@@ -36,6 +37,7 @@ function Shell() {
       {route === 'prep' && <Prep />}
       {route === 'record' && <Record />}
       {route === 'more' && <More />}
+      {route === 'letter' && <LetterScreen />}
       <Footer />
       <Nav route={route} />
     </>

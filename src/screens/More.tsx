@@ -107,7 +107,7 @@ function About() {
       </p>
       <h3>Privacy</h3>
       <p>
-        No account. Nothing you record leaves your device unless you save a backup file yourself. We count page visits and link
+        No account. Nothing you record leaves your device unless you choose to: by saving a backup, or copying, sharing or printing your letter or summary. We count page visits and link
         clicks without cookies, and never see anything you record.
       </p>
       <h3>What this isn't</h3>

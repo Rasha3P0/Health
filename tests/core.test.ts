@@ -4,6 +4,7 @@ import { currentPeriod, isRevealed, nextPeriodStart } from '../src/lib/blind';
 import { addDays, dayRange, daysBetween, isoWeek, weekStart } from '../src/lib/dates';
 import { buildSummary, MIN_READINGS_FOR_RANKING } from '../src/lib/summary';
 import { parseBackup, toBackup } from '../src/lib/backup';
+import { buildLetter, hasLetterContent, letterToText } from '../src/lib/letter';
 import { DEFAULT_SETTINGS, EMPTY_PREP, type DayEntry, type Period } from '../src/lib/types';
 
 describe('dates', () => {
@@ -134,5 +135,73 @@ describe('backup', () => {
     expect(() => parseBackup('{"a":1}')).toThrow(/doesn't look like/);
     const bad = toBackup({ ...snap, days: [{ date: '2026-09-01', scales: { sleep: 9 }, savedAt: 'x' }] });
     expect(() => parseBackup(JSON.stringify(bad))).toThrow(/out of range/);
+  });
+});
+
+describe('scale wording', () => {
+  it('gives every scale five answer words and a question', () => {
+    for (const f of SCALE_FIELDS) {
+      expect(f.answers).toHaveLength(5);
+      expect(f.question.length).toBeGreaterThan(3);
+    }
+  });
+  it('asks what was behind poor sleep and low mood', () => {
+    expect(SCALE_FIELDS.find((f) => f.id === 'sleep')?.reasons?.options.length).toBeGreaterThan(3);
+    expect(SCALE_FIELDS.find((f) => f.id === 'mood')?.reasons?.options.length).toBeGreaterThan(3);
+  });
+});
+
+describe('reasons in the summary', () => {
+  const sleep = SCALE_FIELDS.filter((f) => f.id === 'sleep');
+  it('counts reasons only on problem days, most common first', () => {
+    const days: DayEntry[] = [
+      { date: '2026-09-07', scales: { sleep: 4 }, reasons: { sleep: ['sweats', 'loo'] }, savedAt: '' },
+      { date: '2026-09-08', scales: { sleep: 3 }, reasons: { sleep: ['sweats'] }, savedAt: '' },
+      { date: '2026-09-09', scales: { sleep: 1 }, reasons: { sleep: ['racing'] }, savedAt: '' }, // not a problem day
+    ];
+    const s = buildSummary({ start: '2026-09-07', revealOn: '2026-09-13' }, days, [], sleep);
+    expect(s.behind).toEqual([
+      { id: 'sleep', label: 'Poor sleep', lead: 'When I slept badly', problemDays: 2, reasons: [
+        { id: 'sweats', label: 'Hot flushes or night sweats', days: 2 },
+        { id: 'loo', label: 'Needed the loo', days: 1 },
+      ] },
+    ]);
+  });
+});
+
+describe('letter', () => {
+  const prep = { goals: ['talk'], questions: ['q-tests'], needs: ['n-written'] };
+  const sealed: Period = { id: 'p', start: '2026-09-01', revealOn: '2026-10-01', kind: 'gp' };
+
+  it('is built only from her choices', () => {
+    const text = letterToText(buildLetter({ prep, today: '2026-09-10' }));
+    expect(text).toContain('Dear Doctor,');
+    expect(text).toContain('- Talk through these symptoms together');
+    expect(text).toContain('- Would any tests help? If not, could you tell me why?');
+    expect(text).toContain('- I take things in better in writing.');
+    expect(hasLetterContent(EMPTY_PREP)).toBe(false);
+  });
+
+  it('never quotes a sealed record', () => {
+    const l = buildLetter({ prep, today: '2026-09-10', period: sealed });
+    const text = letterToText(l);
+    expect(text).toContain('stays sealed until 1 Oct 2026');
+    expect(text).not.toMatch(/affected me most/);
+  });
+
+  it('summarises an opened record', () => {
+    const days = dayRange('2026-09-01', '2026-09-10').map((d) => ({
+      date: d, scales: { sleep: 4 }, reasons: { sleep: ['sweats'] }, savedAt: '',
+    }));
+    const opened: Period = { ...sealed, revealOn: '2026-09-10' };
+    const summary = buildSummary(opened, days, [], SCALE_FIELDS.filter((f) => f.id === 'sleep'));
+    const text = letterToText(buildLetter({ prep, today: '2026-09-10', period: opened, summary }));
+    expect(text).toContain('filled in on 10 of 10 days');
+    expect(text).toContain('affected me most were poor sleep');
+    expect(text).toContain('When I slept badly, the reason I noted most often was hot flushes or night sweats (10 of 10 days).');
+  });
+
+  it('greets a nurse as a nurse', () => {
+    expect(buildLetter({ prep, today: '2026-09-10', period: { ...sealed, kind: 'nurse' } }).greeting).toBe('Dear Nurse,');
   });
 });

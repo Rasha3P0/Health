@@ -1,5 +1,6 @@
 import { createContext } from 'preact';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'preact/hooks';
+import { REASONS_FROM } from './content/fields';
 import * as db from './lib/db';
 import { addDays, isoWeek, today as todayKey, type DayKey } from './lib/dates';
 import type { DayEntry, Period, Prep, Settings, Snapshot } from './lib/types';
@@ -13,6 +14,7 @@ interface Store {
   yesterday: DayKey;
   setScale(date: DayKey, field: string, value: number | undefined): void;
   setBleeding(date: DayKey, value: string | undefined): void;
+  setReasons(date: DayKey, field: string, ids: string[]): void;
   finishDay(date: DayKey): void;
   setWeekChanges(changes: string[]): void;
   setPeriods(periods: Period[]): void;
@@ -79,8 +81,14 @@ export function StoreProvider({ children }: { children: preact.ComponentChildren
         updateDay(date, (d) => {
           if (value === undefined) delete d.scales[field];
           else d.scales[field] = value;
+          // Reasons only make sense while the answer says there was a problem.
+          if (d.reasons?.[field] && (value === undefined || value < REASONS_FROM)) {
+            const { [field]: _dropped, ...rest } = d.reasons;
+            d.reasons = rest;
+          }
           return d;
         }),
+      setReasons: (date, field, ids) => updateDay(date, (d) => ({ ...d, reasons: { ...d.reasons, [field]: ids } })),
       setBleeding: (date, value) => updateDay(date, (d) => ({ ...d, bleeding: value })),
       finishDay: (date) => updateDay(date, (d) => ({ ...d, finished: true })),
       setWeekChanges: (changes) => {

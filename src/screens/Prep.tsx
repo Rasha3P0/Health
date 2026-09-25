@@ -1,5 +1,7 @@
 import { useState } from 'preact/hooks';
 import { MultiChoice } from '../components/controls';
+import { ChevronIcon, EnvelopeIcon } from '../components/icons';
+import { hasLetterContent } from '../lib/letter';
 import { GOALS, NEEDS, QUESTIONS } from '../content/prep';
 import { currentPeriod, nextPeriodStart } from '../lib/blind';
 import { daysBetween, formatDay } from '../lib/dates';
@@ -39,6 +41,19 @@ export function Prep() {
         <p class="quiet">Optional. Only what you're comfortable sharing. It goes on the sheet so you don't have to say it out loud.</p>
         <MultiChoice stacked label="What helps me" options={NEEDS} value={prep.needs} onChange={(needs) => setPrep({ ...prep, needs })} />
       </section>
+
+      <a class={`letter-card${hasLetterContent(prep) ? '' : ' muted'}`} href="#/letter">
+        <span class="sealed-icon"><EnvelopeIcon size={26} /></span>
+        <span class="grow">
+          <strong>{hasLetterContent(prep) ? 'Your letter is ready' : 'Turn this into a letter'}</strong>
+          <span class="quiet block">
+            {hasLetterContent(prep)
+              ? 'Built from what you picked. Print it, hand it over, or paste it into your GP practice’s online form.'
+              : 'Pick anything above and a short letter to your GP writes itself.'}
+          </span>
+        </span>
+        <ChevronIcon size={18} />
+      </a>
     </main>
   );
 }

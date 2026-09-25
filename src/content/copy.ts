@@ -27,7 +27,7 @@ export const BLEEDING_SIGNPOST = {
 };
 
 export const SHEET_METHOD =
-  'I recorded these day by day, at the time, with taps on a 1–5 scale (1 = not at all, 5 = very much). ' +
+  'I recorded these day by day, at the time, with taps on a 1–5 scale (1 = no problem, 5 = the worst). ' +
   'The readings were hidden from me until the date of this appointment, so I could not see or steer the trend while recording.';
 
 export const SHEET_FOOTER =

@@ -134,10 +134,24 @@ function Sheet({ period }: { period: Period }) {
         </section>
       )}
 
+      {s.behind.length > 0 && (
+        <section>
+          <h3>What I noted was behind it</h3>
+          <ul>
+            {s.behind.map((b) => (
+              <li key={b.id}>
+                <strong>{b.label}</strong> ({b.problemDays} days):{' '}
+                {b.reasons.map((r) => `${r.label.toLowerCase()} ${r.days}`).join(', ')}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <section>
         <h3>Week by week</h3>
         <WeekTable s={s} />
-        <p class="small">Weekly average of 1–5 readings (1 = not at all, 5 = very much). Blank = not recorded that week.</p>
+        <p class="small">Weekly average of 1–5 readings (1 = no problem, 5 = the worst). Blank = not recorded that week.</p>
       </section>
 
       <section>

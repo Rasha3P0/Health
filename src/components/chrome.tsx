@@ -4,7 +4,7 @@ import { NOT_MEDICAL_ADVICE, URGENT_HELP } from '../content/copy';
 import { needsInstallForSafety } from '../lib/platform';
 import { CalendarIcon, EnvelopeIcon, MoreIcon, ShareIcon, SunIcon } from './icons';
 
-export type Route = 'today' | 'prep' | 'record' | 'more';
+export type Route = 'today' | 'prep' | 'record' | 'more' | 'letter';
 
 const TABS: { id: Route; label: string; Icon: (p: { size?: number }) => preact.JSX.Element }[] = [
   { id: 'today', label: 'Today', Icon: SunIcon },
@@ -29,7 +29,7 @@ export function Nav({ route }: { route: Route }) {
   return (
     <nav class="tabs no-print" aria-label="Main">
       {TABS.map(({ id, label, Icon }) => (
-        <a key={id} href={`#/${id}`} aria-current={route === id ? 'page' : undefined}>
+        <a key={id} href={`#/${id}`} aria-current={(route === 'letter' ? 'prep' : route) === id ? 'page' : undefined}>
           <span class="tab-pill"><Icon size={22} /></span>
           {label}
         </a>

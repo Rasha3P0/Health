@@ -19,10 +19,17 @@ export interface ScaleField {
   kind: 'scale';
   contract: 'blind';
   label: string;
-  /** Asked in the check-in, one at a time. Answered "Not at all" … "Very much". */
+  /** Asked in the check-in, one at a time, in plain words. */
   question: string;
-  /** Short plain-language prompt shown under the label. */
+  /** Short plain-language prompt shown under the question. */
   hint: string;
+  /**
+   * Answer words for 1–5, written for this question. Always the same
+   * direction: 1 = no problem, 5 = the worst. Stored as the number.
+   */
+  answers: [string, string, string, string, string];
+  /** Optional follow-up: what was behind it? Asked when the answer is REASONS_FROM or worse. */
+  reasons?: { question: string; /** Opens the letter sentence, e.g. "When I slept badly". */ lead: string; options: { id: string; label: string }[] };
   /** Off by default; she can switch it on in Settings. */
   optional?: boolean;
 }
@@ -39,25 +46,98 @@ export interface ChoiceField {
 export type Field = ScaleField | ChoiceField;
 
 // One direction for every scale, so there is nothing to decode on a foggy day:
-// 1 = not at all, 5 = very much. A reading, not a judgement.
-export const SCALE_ANCHORS = { low: 'Not at all', high: 'Very much' } as const;
-/** A word for every step, so she never has to decode what "3" means. */
-export const SCALE_LABELS: Record<number, string> = { 1: 'Not at all', 2: 'A little', 3: 'Somewhat', 4: 'A lot', 5: 'Very much' };
+// 1 = no problem, 5 = the worst. Each question words its own answers.
 export const SCALE_VALUES = [1, 2, 3, 4, 5] as const;
 /** Readings at or above this count as a "hard day" for that field in the summary. */
 export const HARD_DAY_THRESHOLD = 4;
 
+/** Answer at or above this and the "what was behind it?" follow-up is asked. */
+export const REASONS_FROM = 3;
+
+const DONT_KNOW = { id: 'unknown', label: "Not sure" };
+
 export const SCALE_FIELDS: ScaleField[] = [
-  { id: 'sleep', kind: 'scale', contract: 'blind', question: 'Did you sleep badly?', label: 'Poor sleep', hint: 'Last night' },
-  { id: 'energy', kind: 'scale', contract: 'blind', question: 'Low on energy?', label: 'Low energy', hint: 'Today, overall' },
-  { id: 'mood', kind: 'scale', contract: 'blind', question: 'Low in mood?', label: 'Low mood', hint: 'Today, overall' },
-  { id: 'fog', kind: 'scale', contract: 'blind', question: 'Brain fog?', label: 'Brain fog', hint: 'Losing words, focus or thread' },
-  { id: 'aches', kind: 'scale', contract: 'blind', question: 'Joint or muscle aches?', label: 'Joint or muscle aches', hint: 'Today, overall' },
-  { id: 'overload', kind: 'scale', contract: 'blind', question: 'Sensory or social overload?', label: 'Sensory or social overload', hint: 'Noise, light, people, demands' },
-  { id: 'flushes', kind: 'scale', contract: 'blind', question: 'Hot flushes or night sweats?', label: 'Hot flushes or night sweats', hint: 'Last 24 hours' },
-  { id: 'anxiety', kind: 'scale', contract: 'blind', question: 'Feeling anxious?', label: 'Anxiety', hint: 'Today, overall', optional: true },
-  { id: 'headache', kind: 'scale', contract: 'blind', question: 'Headaches?', label: 'Headaches', hint: 'Today, overall', optional: true },
-  { id: 'libido', kind: 'scale', contract: 'blind', question: 'Low sex drive?', label: 'Low sex drive', hint: 'Lately', optional: true },
+  {
+    id: 'sleep', kind: 'scale', contract: 'blind', label: 'Poor sleep',
+    question: 'How did you sleep?', hint: 'Last night',
+    answers: ['Well', 'OK', 'Not great', 'Badly', 'Barely at all'],
+    reasons: {
+      question: 'What kept you awake?',
+      lead: 'When I slept badly',
+      options: [
+        { id: 'sweats', label: 'Hot flushes or night sweats' },
+        { id: 'loo', label: 'Needed the loo' },
+        { id: 'racing', label: 'Racing mind or worry' },
+        { id: 'pain', label: 'Pain or aches' },
+        { id: 'cant-drop', label: "Couldn't get to sleep" },
+        { id: 'early', label: 'Woke too early' },
+        { id: 'restless', label: 'Restless legs or body' },
+        { id: 'others', label: 'Noise, partner, kids or pets' },
+        DONT_KNOW,
+      ],
+    },
+  },
+  {
+    id: 'energy', kind: 'scale', contract: 'blind', label: 'Low energy',
+    question: "How's your energy?", hint: 'Today, overall',
+    answers: ['Good', 'Fine', 'A bit low', 'Low', 'Running on empty'],
+  },
+  {
+    id: 'mood', kind: 'scale', contract: 'blind', label: 'Low mood',
+    question: "How's your mood?", hint: 'Today, overall',
+    answers: ['Good', 'OK', 'A bit low', 'Low', 'Very low'],
+    reasons: {
+      question: 'Anything behind it?',
+      lead: 'When my mood was low',
+      options: [
+        { id: 'tired', label: 'Tired or slept badly' },
+        { id: 'pain', label: 'Pain or feeling unwell' },
+        { id: 'overwhelm', label: 'Overwhelmed or overloaded' },
+        { id: 'work', label: 'Work' },
+        { id: 'home', label: 'Home, family or relationships' },
+        { id: 'alone', label: 'Lonely or cut off' },
+        { id: 'irritable', label: 'Irritable or short-fused' },
+        { id: 'anxious', label: 'Anxious or on edge' },
+        { id: 'no-reason', label: 'Nothing obvious: it just came' },
+        DONT_KNOW,
+      ],
+    },
+  },
+  {
+    id: 'fog', kind: 'scale', contract: 'blind', label: 'Brain fog',
+    question: 'How clear is your thinking?', hint: 'Finding words, focus, keeping your thread',
+    answers: ['Clear', 'Mostly clear', 'A bit foggy', 'Foggy', 'Very foggy'],
+  },
+  {
+    id: 'aches', kind: 'scale', contract: 'blind', label: 'Joint or muscle aches',
+    question: 'Any joint or muscle aches?', hint: 'Today, overall',
+    answers: ['None', 'Mild', 'Noticeable', 'Bad', 'Severe'],
+  },
+  {
+    id: 'overload', kind: 'scale', contract: 'blind', label: 'Sensory or social overload',
+    question: 'How overloaded do you feel?', hint: 'Noise, light, people, demands',
+    answers: ['Not at all', 'A little', 'Somewhat', 'A lot', 'Overwhelmed'],
+  },
+  {
+    id: 'flushes', kind: 'scale', contract: 'blind', label: 'Hot flushes or night sweats',
+    question: 'Any hot flushes or night sweats?', hint: 'Last 24 hours',
+    answers: ['None', 'One or two', 'A few', 'Lots', 'Almost constant'],
+  },
+  {
+    id: 'anxiety', kind: 'scale', contract: 'blind', label: 'Anxiety', optional: true,
+    question: 'How anxious do you feel?', hint: 'Today, overall',
+    answers: ['Not at all', 'A little', 'Somewhat', 'Very', 'Extremely'],
+  },
+  {
+    id: 'headache', kind: 'scale', contract: 'blind', label: 'Headaches', optional: true,
+    question: 'Any headaches?', hint: 'Today, overall',
+    answers: ['None', 'Mild', 'Noticeable', 'Bad', 'Severe'],
+  },
+  {
+    id: 'libido', kind: 'scale', contract: 'blind', label: 'Low sex drive', optional: true,
+    question: "How's your sex drive?", hint: 'Lately, compared with what is normal for you',
+    answers: ['Normal for me', 'Slightly low', 'Low', 'Very low', 'Gone'],
+  },
 ];
 
 export const BLEEDING_FIELD: ChoiceField = {

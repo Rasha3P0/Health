@@ -5,6 +5,8 @@ export interface DayEntry {
   /** Blind 1–5 readings keyed by field id. Missing = not answered (never "0"). */
   scales: Record<string, number>;
   bleeding?: string;
+  /** Her own taps for "what was behind it?", keyed by field id. Sealed like the reading. */
+  reasons?: Record<string, string[]>;
   /** ISO timestamp of the last edit. Shown on the sheet as evidence of when it was recorded. */
   savedAt: string;
   /** True if first recorded on a later day (she may log yesterday). */
