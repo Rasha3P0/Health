@@ -1,4 +1,4 @@
-import { CONTRACEPTION, DURATION, GET_BACK, GOALS, IMPACT, LAST_PERIOD, MEDICATION, NEEDS, QUESTIONS, type LetterOption } from '../content/prep';
+import { CONTRACEPTION, DURATION, GET_BACK, GOALS, IMPACT, LAST_PERIOD, MEDICATION, MOTHER_AGE, NEEDS, QUESTIONS, type LetterOption } from '../content/prep';
 import { formatDay, type DayKey } from './dates';
 import type { Summary } from './summary';
 import type { Period, Prep } from './types';
@@ -84,7 +84,7 @@ export function buildLetter(args: {
     });
   }
 
-  const background = [line(LAST_PERIOD, prep.lastPeriod), line(CONTRACEPTION, prep.contraception), line(MEDICATION, prep.medication)].filter(Boolean);
+  const background = [line(LAST_PERIOD, prep.lastPeriod), line(CONTRACEPTION, prep.contraception), line(MEDICATION, prep.medication), line(MOTHER_AGE, prep.motherAge)].filter(Boolean);
   if (background.length) sections.push({ heading: 'Background', bullets: background });
 
   const goals = pick(GOALS, prep.goals);

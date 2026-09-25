@@ -2,7 +2,7 @@ import { useState } from 'preact/hooks';
 import { MultiChoice, SingleChips } from '../components/controls';
 import { ChevronIcon, EnvelopeIcon } from '../components/icons';
 import { hasLetterContent } from '../lib/letter';
-import { CONTRACEPTION, DURATION, GET_BACK, GOALS, IMPACT, LAST_PERIOD, MEDICATION, NEEDS, QUESTIONS } from '../content/prep';
+import { CONTRACEPTION, DURATION, GET_BACK, GOALS, IMPACT, LAST_PERIOD, MEDICATION, MOTHER_AGE, NEEDS, QUESTIONS } from '../content/prep';
 import { currentPeriod, nextPeriodStart } from '../lib/blind';
 import { daysBetween, formatDay } from '../lib/dates';
 import type { Period } from '../lib/types';
@@ -49,6 +49,8 @@ export function Prep() {
         <SingleChips label="Contraception" options={CONTRACEPTION} value={prep.contraception} onChange={(contraception) => setPrep({ ...prep, contraception })} />
         <h3>Medication</h3>
         <SingleChips label="Medication" options={MEDICATION} value={prep.medication} onChange={(medication) => setPrep({ ...prep, medication })} />
+        <h3>About what age did your mother's periods stop, if you know?</h3>
+        <SingleChips label="Mother's periods stopped" options={MOTHER_AGE} value={prep.motherAge} onChange={(motherAge) => setPrep({ ...prep, motherAge })} />
       </details>
 
       <section class="card">

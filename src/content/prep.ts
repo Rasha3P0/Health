@@ -80,6 +80,15 @@ export const CONTRACEPTION: LetterOption[] = [
   { id: 'skip', label: 'Prefer not to say', letter: '' },
 ];
 
+// Family context, stated as a fact. The app never says what it might mean.
+export const MOTHER_AGE: LetterOption[] = [
+  { id: 'lt40', label: 'Before 40', letter: "My mother's periods stopped before 40." },
+  { id: '40-45', label: '40 to 45', letter: "My mother's periods stopped between 40 and 45." },
+  { id: 'gt45', label: 'After 45', letter: "My mother's periods stopped after 45." },
+  { id: 'unknown', label: "Don't know", letter: '' },
+  { id: 'skip', label: 'Prefer not to say', letter: '' },
+];
+
 export const MEDICATION: LetterOption[] = [
   { id: 'none', label: 'Nothing regular', letter: "I'm not taking any regular medication." },
   { id: 'hrt', label: 'HRT', letter: "I'm currently taking HRT." },

@@ -229,3 +229,12 @@ describe('letter: whole-person content', () => {
     expect(given).toContain("- I'm currently taking HRT.");
   });
 });
+
+describe('letter: family context', () => {
+  it("states the mother's age as a fact, and leaves it out when unknown", () => {
+    const t = (motherAge: string) => letterToText(buildLetter({ prep: { ...EMPTY_PREP, goals: ['talk'], motherAge }, today: '2026-09-10' }));
+    expect(t('40-45')).toContain("- My mother's periods stopped between 40 and 45.");
+    expect(t('unknown')).not.toContain('mother');
+    expect(t('skip')).not.toContain('mother');
+  });
+});

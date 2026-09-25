@@ -45,6 +45,8 @@ export interface Prep {
   lastPeriod?: string;
   contraception?: string;
   medication?: string;
+  /** Roughly when her mother's periods stopped. */
+  motherAge?: string;
 }
 
 export interface Settings {

@@ -14,6 +14,7 @@ All health-adjacent copy is **draft** until it has been checked against current 
 | 7 | Appointment goals | `src/content/prep.ts` → `GOALS` | Informs, doesn't advise, doesn't set her against the GP. | Draft |
 | 8 | Questions to ask | `prep.ts` → `QUESTIONS` | Same as #7. Especially "If you don't think this needs treating, could you explain why?" The tests question is deliberately age-neutral: **check it against the current NICE NG23 menopause guideline** (symptom-based diagnosis over 45) before going public. | Draft |
 | 8b | Impact, "get back to", duration, last period, contraception, medication | `prep.ts` | Contraception must read as a time-saver, not re-centre fertility. "Prefer not to say" leaves the line out. Wording on the periods options. | Draft |
+| 8c | Mother's age at menopause | `prep.ts` → `MOTHER_AGE` | Stated as a fact only; the app never interprets it. Age bands and wording. | Draft |
 | 9 | "What helps me" (ND accommodations) | `prep.ts` → `NEEDS` | Review with ND women as well as a clinician. | Draft |
 | 9b | Letter to the clinician (fixed template) | `src/lib/letter.ts` | Tone is collaborative and not adversarial. Makes no claims. Only quotes the record after it has been opened. | Draft |
 | 10 | About / privacy text | `src/screens/More.tsx` → `About` | Privacy claims must stay true if analytics or hosting change. | Draft |
