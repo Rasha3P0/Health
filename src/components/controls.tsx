@@ -57,3 +57,25 @@ export function MultiChoice(props: {
     </div>
   );
 }
+
+/** One pick from wrapping chips. Tapping the picked chip again clears it. */
+export function SingleChips(props: {
+  label: string;
+  options: { id: string; label: string }[];
+  value: string | undefined;
+  onChange: (v: string | undefined) => void;
+}) {
+  const { label, options, value, onChange } = props;
+  return (
+    <div class="chips" role="radiogroup" aria-label={label}>
+      {options.map((o) => {
+        const on = value === o.id;
+        return (
+          <button key={o.id} type="button" role="radio" aria-checked={on} class={`chip${on ? ' on' : ''}`} onClick={() => onChange(on ? undefined : o.id)}>
+            {o.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}

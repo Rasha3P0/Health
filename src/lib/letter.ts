@@ -1,4 +1,4 @@
-import { GOALS, NEEDS, QUESTIONS } from '../content/prep';
+import { CONTRACEPTION, DURATION, GET_BACK, GOALS, IMPACT, LAST_PERIOD, MEDICATION, NEEDS, QUESTIONS, type LetterOption } from '../content/prep';
 import { formatDay, type DayKey } from './dates';
 import type { Summary } from './summary';
 import type { Period, Prep } from './types';
@@ -33,8 +33,11 @@ function list(items: string[]): string {
 }
 
 export function hasLetterContent(prep: Prep): boolean {
-  return prep.goals.length + prep.questions.length + prep.needs.length > 0;
+  return prep.goals.length + prep.questions.length + prep.needs.length + prep.impact.length > 0 || !!prep.getBackTo;
 }
+
+/** The letter line for a single-pick answer, or nothing if skipped or "prefer not to say". */
+const line = (opts: LetterOption[], id: string | undefined) => (id && opts.find((o) => o.id === id)?.letter) || '';
 
 export function buildLetter(args: {
   prep: Prep;
@@ -47,10 +50,23 @@ export function buildLetter(args: {
   const { prep, today, period, summary } = args;
   const sections: LetterSection[] = [];
 
-  sections.push({
-    text:
-      "I've booked this appointment to talk about how I've been feeling. I've written this down so we can make the most of the time and so I don't forget anything important.",
-  });
+  // Opening: led by what she wants back, if she picked it.
+  const back = line(GET_BACK, prep.getBackTo);
+  const opener = back
+    ? `I'd like to get back to ${back}. I've booked this appointment because my symptoms are getting in the way of that, and I've written this down so we can make the most of the time.`
+    : "I've booked this appointment to talk about how I've been feeling. I've written this down so we can make the most of the time and so I don't forget anything important.";
+  sections.push({ text: [opener, line(DURATION, prep.duration)].filter(Boolean).join(' ') });
+
+  // What it's costing her comes before any symptom numbers.
+  const impact = IMPACT.filter((o) => prep.impact.includes(o.id)).map((o) => o.letter);
+  if (impact.length) {
+    const stopped = impact.find((t) => t.startsWith("I've stopped"));
+    const areas = impact.filter((t) => t !== stopped);
+    const parts: string[] = [];
+    if (areas.length) parts.push(`It's affecting ${list(areas)}.`);
+    if (stopped) parts.push(`${stopped}.`);
+    sections.push({ heading: 'How this is affecting my life', text: parts.join(' ') });
+  }
 
   if (period && summary && summary.daysLogged > 0) {
     const most = summary.mostAffected.map((f) => f.label.toLowerCase());
@@ -67,6 +83,9 @@ export function buildLetter(args: {
       text: `I've been keeping a daily symptom record since ${formatDay(period.start)}. It stays sealed until ${formatDay(period.revealOn)} so that I can't steer it, and I'll bring the summary with me.`,
     });
   }
+
+  const background = [line(LAST_PERIOD, prep.lastPeriod), line(CONTRACEPTION, prep.contraception), line(MEDICATION, prep.medication)].filter(Boolean);
+  if (background.length) sections.push({ heading: 'Background', bullets: background });
 
   const goals = pick(GOALS, prep.goals);
   if (goals.length) sections.push({ heading: "What I'd like from this appointment", bullets: goals });

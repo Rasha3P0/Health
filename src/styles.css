@@ -255,6 +255,13 @@ input[type='date'] {
 .field legend { padding: 0; margin-bottom: 0.5rem; }
 .field-label { font-weight: 700; display: block; }
 
+/* ---------- Appointment ---------- */
+.card h3 { margin-top: 1.25rem; }
+details.background summary { cursor: pointer; list-style: none; display: flex; align-items: center; min-height: 48px; }
+details.background summary::-webkit-details-marker { display: none; }
+details.background summary::after { content: '+'; margin-left: auto; font-size: 1.5rem; color: var(--accent); padding-left: 0.75rem; }
+details.background[open] summary::after { content: '–'; }
+
 /* ---------- Letter ---------- */
 .back { display: inline-flex; align-items: center; gap: 0.25rem; min-height: 44px; text-decoration: none; font-weight: 700; margin-top: 0.5rem; }
 .letter-card {

@@ -1,8 +1,8 @@
 import { useState } from 'preact/hooks';
-import { MultiChoice } from '../components/controls';
+import { MultiChoice, SingleChips } from '../components/controls';
 import { ChevronIcon, EnvelopeIcon } from '../components/icons';
 import { hasLetterContent } from '../lib/letter';
-import { GOALS, NEEDS, QUESTIONS } from '../content/prep';
+import { CONTRACEPTION, DURATION, GET_BACK, GOALS, IMPACT, LAST_PERIOD, MEDICATION, NEEDS, QUESTIONS } from '../content/prep';
 import { currentPeriod, nextPeriodStart } from '../lib/blind';
 import { daysBetween, formatDay } from '../lib/dates';
 import type { Period } from '../lib/types';
@@ -25,8 +25,35 @@ export function Prep() {
       <RevealDate />
 
       <section class="card">
+        <h2>What is this getting in the way of?</h2>
+        <p class="quiet">This goes near the top of your letter. It's what your symptoms are costing you, in your terms.</p>
+        <MultiChoice label="What it's affecting" options={IMPACT} value={prep.impact} onChange={(impact) => setPrep({ ...prep, impact })} />
+        <h3>What would you most like to get back to?</h3>
+        <p class="quiet">Pick one. Your letter opens with it.</p>
+        <SingleChips label="What I'd like to get back to" options={GET_BACK} value={prep.getBackTo} onChange={(getBackTo) => setPrep({ ...prep, getBackTo })} />
+      </section>
+
+      <details class="card background">
+        <summary>
+          <span>
+            <strong>A little background</strong>
+            <span class="quiet block">Optional. Saves time in the room. Anything you skip stays out of the letter.</span>
+          </span>
+        </summary>
+        <h3>How long has this been going on?</h3>
+        <SingleChips label="How long" options={DURATION} value={prep.duration} onChange={(duration) => setPrep({ ...prep, duration })} />
+        <h3>When was your last period?</h3>
+        <SingleChips label="Last period" options={LAST_PERIOD} value={prep.lastPeriod} onChange={(lastPeriod) => setPrep({ ...prep, lastPeriod })} />
+        <h3>Contraception</h3>
+        <p class="quiet">Answering here can stop it taking up appointment time.</p>
+        <SingleChips label="Contraception" options={CONTRACEPTION} value={prep.contraception} onChange={(contraception) => setPrep({ ...prep, contraception })} />
+        <h3>Medication</h3>
+        <SingleChips label="Medication" options={MEDICATION} value={prep.medication} onChange={(medication) => setPrep({ ...prep, medication })} />
+      </details>
+
+      <section class="card">
         <h2>What do you want from it?</h2>
-        <p class="quiet">Pick any. These go at the top of your summary sheet.</p>
+        <p class="quiet">Pick any. The more specific, the better.</p>
         <MultiChoice stacked label="What I want from this appointment" options={GOALS} value={prep.goals} onChange={(goals) => setPrep({ ...prep, goals })} />
       </section>
 

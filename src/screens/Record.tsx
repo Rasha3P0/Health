@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks';
 import { SHEET_FOOTER, SHEET_METHOD } from '../content/copy';
 import { activeScaleFields, BLEEDING_FIELD, SCALE_FIELDS, WEEKLY_CHANGES, WEEKLY_NOTHING } from '../content/fields';
-import { GOALS, NEEDS, QUESTIONS } from '../content/prep';
+import { GOALS, IMPACT, NEEDS, QUESTIONS } from '../content/prep';
 import { currentPeriod, revealedPeriods } from '../lib/blind';
 import { dayRange, formatDay, fromDayKey } from '../lib/dates';
 import { buildSummary, type Summary } from '../lib/summary';
@@ -103,6 +103,13 @@ function Sheet({ period }: { period: Period }) {
           {s.lateDays > 0 && <> ({s.lateDays} entered the next day)</>}.
         </p>
       </header>
+
+      {prep.impact.length > 0 && (
+        <section>
+          <h3>What this is getting in the way of</h3>
+          <p>{pick(IMPACT, prep.impact).map((o) => o.label).join(' · ')}</p>
+        </section>
+      )}
 
       {(prep.goals.length > 0 || prep.needs.length > 0) && (
         <section>

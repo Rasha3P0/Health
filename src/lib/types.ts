@@ -37,6 +37,14 @@ export interface Prep {
   goals: string[];
   questions: string[];
   needs: string[];
+  /** What the symptoms are getting in the way of. */
+  impact: string[];
+  /** One pick: "I'd like to get back to …". */
+  getBackTo?: string;
+  duration?: string;
+  lastPeriod?: string;
+  contraception?: string;
+  medication?: string;
 }
 
 export interface Settings {
@@ -54,5 +62,5 @@ export interface Snapshot {
   settings: Settings;
 }
 
-export const EMPTY_PREP: Prep = { goals: [], questions: [], needs: [] };
+export const EMPTY_PREP: Prep = { goals: [], questions: [], needs: [], impact: [] };
 export const DEFAULT_SETTINGS: Settings = { enabledOptional: [], onboarded: false };

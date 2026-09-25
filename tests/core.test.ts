@@ -170,14 +170,14 @@ describe('reasons in the summary', () => {
 });
 
 describe('letter', () => {
-  const prep = { goals: ['talk'], questions: ['q-tests'], needs: ['n-written'] };
+  const prep = { ...EMPTY_PREP, goals: ['talk'], questions: ['q-tests'], needs: ['n-written'] };
   const sealed: Period = { id: 'p', start: '2026-09-01', revealOn: '2026-10-01', kind: 'gp' };
 
   it('is built only from her choices', () => {
     const text = letterToText(buildLetter({ prep, today: '2026-09-10' }));
     expect(text).toContain('Dear Doctor,');
     expect(text).toContain('- Talk through these symptoms together');
-    expect(text).toContain('- Would any tests help? If not, could you tell me why?');
+    expect(text).toContain('- Would tests help here, or is this assessed from symptoms?');
     expect(text).toContain('- I take things in better in writing.');
     expect(hasLetterContent(EMPTY_PREP)).toBe(false);
   });
@@ -203,5 +203,29 @@ describe('letter', () => {
 
   it('greets a nurse as a nurse', () => {
     expect(buildLetter({ prep, today: '2026-09-10', period: { ...sealed, kind: 'nurse' } }).greeting).toBe('Dear Nurse,');
+  });
+});
+
+describe('letter: whole-person content', () => {
+  it('opens with what she wants back, then what it costs her, before any numbers', () => {
+    const prep = { ...EMPTY_PREP, getBackTo: 'thinking', duration: 'gt12', impact: ['work', 'caring', 'enjoy'] };
+    const text = letterToText(buildLetter({ prep, today: '2026-09-10' }));
+    expect(text).toMatch(/^Dear Doctor,\n\nI'd like to get back to thinking clearly\./);
+    expect(text).toContain('going on for more than a year.');
+    expect(text).toContain("It's affecting my work and parenting or caring for others. I've stopped doing things I enjoy.");
+    expect(text.indexOf('How this is affecting my life')).toBeLessThan(text.indexOf('Thank you'));
+  });
+
+  it('falls back to a neutral opener', () => {
+    expect(letterToText(buildLetter({ prep: { ...EMPTY_PREP, goals: ['talk'] }, today: '2026-09-10' }))).toContain("I've booked this appointment to talk about how I've been feeling.");
+  });
+
+  it('leaves background out when skipped or "prefer not to say"', () => {
+    const skipped = letterToText(buildLetter({ prep: { ...EMPTY_PREP, goals: ['talk'], contraception: 'skip', lastPeriod: 'skip', medication: 'skip' }, today: '2026-09-10' }));
+    expect(skipped).not.toContain('Background');
+    expect(skipped).not.toMatch(/contraception/i);
+    const given = letterToText(buildLetter({ prep: { ...EMPTY_PREP, goals: ['talk'], contraception: 'not-relevant', medication: 'hrt' }, today: '2026-09-10' }));
+    expect(given).toContain("- Contraception isn't relevant to me.");
+    expect(given).toContain("- I'm currently taking HRT.");
   });
 });
