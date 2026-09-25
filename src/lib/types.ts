@@ -52,6 +52,8 @@ export interface Prep {
   meds: string[];
   /** Supplements and over-the-counter things, which aren't on her GP record. */
   supplements: string[];
+  /** Day-to-day baseline (the weekly card records changes to these). */
+  lifestyle: Partial<Record<'exercise' | 'alcohol' | 'smoking' | 'caffeine' | 'meals', string>>;
   /** Roughly when her mother's periods stopped. */
   motherAge?: string;
   /** Furthest Appointment step reached (1–8), so the tab can offer "Carry on". */
@@ -73,5 +75,5 @@ export interface Snapshot {
   settings: Settings;
 }
 
-export const EMPTY_PREP: Prep = { goals: [], questions: [], needs: [], symptoms: [], impact: [], meds: [], supplements: [] };
+export const EMPTY_PREP: Prep = { goals: [], questions: [], needs: [], symptoms: [], impact: [], meds: [], supplements: [], lifestyle: {} };
 export const DEFAULT_SETTINGS: Settings = { enabledOptional: [], onboarded: false };

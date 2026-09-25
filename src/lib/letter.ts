@@ -1,4 +1,4 @@
-import { CONTRACEPTION, DURATION, GET_BACK, GOALS, SYMPTOMS, IMPACT, LAST_PERIOD, MOTHER_AGE, SUPPLEMENTS, NEEDS, QUESTIONS, type LetterOption } from '../content/prep';
+import { CONTRACEPTION, DURATION, GET_BACK, GOALS, SYMPTOMS, IMPACT, LAST_PERIOD, LIFESTYLE, MOTHER_AGE, SUPPLEMENTS, NEEDS, QUESTIONS, type LetterOption } from '../content/prep';
 import { formatDay, type DayKey } from './dates';
 import type { Summary } from './summary';
 import type { Period, Prep } from './types';
@@ -56,6 +56,16 @@ function medicationLines(prep: Prep): string[] {
   return lines;
 }
 
+/** "Day to day: I exercise …, drink … and have …. I often skip meals." */
+function dayToDay(prep: Prep): string {
+  const said = (key: (typeof LIFESTYLE)[number]['key']) =>
+    LIFESTYLE.find((l) => l.key === key)!.options.find((o) => o.id === prep.lifestyle[key])?.letter ?? '';
+  const parts = (['exercise', 'alcohol', 'smoking', 'caffeine'] as const).map(said).filter(Boolean);
+  const meals = said('meals');
+  if (!parts.length && !meals) return '';
+  return ['Day to day:', parts.length ? `I ${list(parts)}.` : '', meals].filter(Boolean).join(' ');
+}
+
 /** The letter line for a single-pick answer, or nothing if skipped or "prefer not to say". */
 const line = (opts: LetterOption[], id: string | undefined) => (id && opts.find((o) => o.id === id)?.letter) || '';
 
@@ -111,7 +121,7 @@ export function buildLetter(args: {
     });
   }
 
-  const background = [...medicationLines(prep), line(MOTHER_AGE, prep.motherAge), line(LAST_PERIOD, prep.lastPeriod), line(CONTRACEPTION, prep.contraception)].filter(Boolean);
+  const background = [...medicationLines(prep), dayToDay(prep), line(MOTHER_AGE, prep.motherAge), line(LAST_PERIOD, prep.lastPeriod), line(CONTRACEPTION, prep.contraception)].filter(Boolean);
   if (background.length) sections.push({ heading: 'Background', bullets: background });
 
   const goals = pick(GOALS, prep.goals);

@@ -8,6 +8,7 @@ import {
   GOALS,
   IMPACT,
   LAST_PERIOD,
+  LIFESTYLE,
   MEDS,
   MEDS_EXCLUSIVE,
   MOTHER_AGE,
@@ -44,7 +45,8 @@ type MultiKey = 'meds' | 'supplements';
 
 type BgScreen =
   | { key: SingleKey; multi?: false; question: string; hint?: string; options: LetterOption[] }
-  | { key: MultiKey; multi: true; question: string; hint?: string; options: { id: string; label: string }[]; exclusive: string[] };
+  | { key: MultiKey; multi: true; question: string; hint?: string; options: { id: string; label: string }[]; exclusive: string[] }
+  | { key: 'lifestyle'; multi: 'groups'; question: string; hint?: string };
 
 // Self first: her own health and history, then reproductive items lower.
 const BACKGROUND: BgScreen[] = [
@@ -58,11 +60,18 @@ const BACKGROUND: BgScreen[] = [
     options: SUPPLEMENTS,
     exclusive: SUPPLEMENTS_EXCLUSIVE,
   },
+  {
+    key: 'lifestyle',
+    multi: 'groups',
+    question: 'Day to day',
+    hint: 'Your GP will usually ask about these. Answering here saves the time for why you came.',
+  },
   { key: 'motherAge', question: "About what age did your mother's periods stop, if you know?", options: MOTHER_AGE },
   { key: 'lastPeriod', question: 'When was your last period?', options: LAST_PERIOD },
   { key: 'contraception', question: 'Contraception', hint: 'Answering here can stop it taking up appointment time.', options: CONTRACEPTION },
 ];
-const answered = (prep: PrepData, bg: BgScreen) => (bg.multi ? prep[bg.key].length > 0 : !!prep[bg.key]);
+const answered = (prep: PrepData, bg: BgScreen) =>
+  bg.multi === 'groups' ? Object.values(prep.lifestyle).some(Boolean) : bg.multi ? prep[bg.key].length > 0 : !!prep[bg.key];
 
 type Step =
   | { main: 1; kind: 'date' }
@@ -291,7 +300,19 @@ function PrepFlow({ start, onClose }: { start: number; onClose: () => void }) {
         <>
           {title(step.bg.question)}
           {step.bg.hint && <p class="quiet">{step.bg.hint}</p>}
-          {step.bg.multi ? (
+          {step.bg.multi === 'groups' ? (
+            LIFESTYLE.map((g) => (
+              <div key={g.key} class="group">
+                <h3>{g.label}</h3>
+                <SingleChips
+                  label={g.label}
+                  options={g.options}
+                  value={prep.lifestyle[g.key]}
+                  onChange={(v) => set({ lifestyle: { ...prepRef.current.lifestyle, [g.key]: v } })}
+                />
+              </div>
+            ))
+          ) : step.bg.multi ? (
             <MultiChoice
               stacked
               label={step.bg.question}

@@ -104,6 +104,65 @@ export const CONTRACEPTION: LetterOption[] = [
   { id: 'skip', label: 'Prefer not to say', letter: '' },
 ];
 
+// Day to day. The GP will usually ask, so answering up front saves the
+// appointment for cause. Letter text is a fragment after "I …".
+// Deliberately NOT asked: weight, BMI, calories or food diaries (disordered-eating
+// risk; the GP can measure in the room if needed). Do not add them.
+export type LifestyleKey = 'exercise' | 'alcohol' | 'smoking' | 'caffeine' | 'meals';
+export const LIFESTYLE: { key: LifestyleKey; label: string; options: LetterOption[] }[] = [
+  {
+    key: 'exercise',
+    label: 'Exercise',
+    options: [
+      { id: 'most', label: 'Most days', letter: 'exercise most days' },
+      { id: 'few', label: 'A few times a week', letter: 'exercise a few times a week' },
+      { id: 'rarely', label: 'Rarely', letter: 'rarely exercise' },
+      { id: 'not-now', label: 'Not at the moment', letter: "am not exercising at the moment" },
+    ],
+  },
+  {
+    key: 'alcohol',
+    label: 'Alcohol',
+    options: [
+      { id: 'none', label: 'None', letter: "don't drink alcohol" },
+      { id: 'within', label: 'Within 14 units a week', letter: 'drink within 14 units a week' },
+      { id: 'more', label: 'More than 14 units a week', letter: 'drink more than 14 units a week' },
+      { id: 'unsure', label: 'Not sure', letter: '' },
+      { id: 'skip', label: 'Prefer not to say', letter: '' },
+    ],
+  },
+  {
+    key: 'smoking',
+    label: 'Smoking or vaping',
+    options: [
+      { id: 'never', label: 'Never', letter: "don't smoke or vape" },
+      { id: 'used-to', label: 'Used to', letter: 'used to smoke or vape' },
+      { id: 'current', label: 'Currently', letter: 'smoke or vape' },
+      { id: 'skip', label: 'Prefer not to say', letter: '' },
+    ],
+  },
+  {
+    key: 'caffeine',
+    label: 'Caffeine',
+    options: [
+      { id: 'none', label: 'None', letter: "don't have caffeine" },
+      { id: '1-2', label: '1–2 drinks a day', letter: 'have 1–2 caffeinated drinks a day' },
+      { id: '3+', label: '3 or more a day', letter: 'have 3 or more caffeinated drinks a day' },
+    ],
+  },
+  {
+    // Meals get their own sentence, so a skipped-meals answer reads plainly.
+    key: 'meals',
+    label: 'Meals',
+    options: [
+      { id: 'regular', label: 'Regular meals', letter: 'I eat regular meals.' },
+      { id: 'skip-meals', label: 'Often skip meals', letter: 'I often skip meals.' },
+      { id: 'varies', label: 'It varies', letter: 'My meals vary.' },
+      { id: 'skip', label: 'Prefer not to say', letter: '' },
+    ],
+  },
+];
+
 // Family context, stated as a fact. The app never says what it might mean.
 export const MOTHER_AGE: LetterOption[] = [
   { id: 'lt40', label: 'Before 40', letter: "My mother's periods stopped before 40." },

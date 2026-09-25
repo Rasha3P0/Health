@@ -291,3 +291,16 @@ describe('letter: medication, supplements, HRT', () => {
     expect(normalizePrep({ medication: 'hrt', meds: ['none'] }).meds).toEqual(['none']);
   });
 });
+
+describe('letter: day to day', () => {
+  const t = (lifestyle: Record<string, string>) => letterToText(buildLetter({ prep: { ...EMPTY_PREP, goals: ['talk'], lifestyle }, today: '2026-09-10' }));
+  it('reads as one line in the background', () => {
+    expect(t({ exercise: 'few', alcohol: 'within', smoking: 'never', caffeine: '1-2', meals: 'skip-meals' })).toContain(
+      "- Day to day: I exercise a few times a week, drink within 14 units a week, don't smoke or vape and have 1–2 caffeinated drinks a day. I often skip meals.",
+    );
+  });
+  it('leaves out not sure and prefer not to say', () => {
+    expect(t({ alcohol: 'skip', smoking: 'skip' })).not.toContain('Day to day');
+    expect(t({ alcohol: 'unsure', meals: 'regular' })).toContain('- Day to day: I eat regular meals.');
+  });
+});
