@@ -97,7 +97,6 @@ function SealedCard() {
       </a>
     );
   }
-  const logged = snap.days.filter((d) => d.date >= period.start && d.date <= today && Object.keys(d.scales).length > 0).length;
   const toGo = daysBetween(today, period.revealOn);
   const span = Math.max(1, daysBetween(period.start, period.revealOn));
   const pct = Math.min(100, Math.max(4, ((span - toGo) / span) * 100));
@@ -106,9 +105,8 @@ function SealedCard() {
       <span class="sealed-icon"><EnvelopeIcon size={26} /></span>
       <span class="grow">
         <strong>Sealed until {formatDay(period.revealOn, false)}</strong>
-        <span class="quiet block">
-          {toGo === 1 ? 'Opens tomorrow' : `${toGo} days to go`} · {logged} {logged === 1 ? 'day' : 'days'} recorded
-        </span>
+        <span class="quiet block">{toGo === 1 ? 'Opens tomorrow' : `Opens in ${toGo} days`}</span>
+        {/* One measure only: time until it opens. Days recorded would show gaps, which is streak pressure. */}
         <span class="track" aria-hidden="true"><span style={{ width: `${pct}%` }} /></span>
       </span>
     </a>
