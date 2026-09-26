@@ -96,7 +96,7 @@ export const SCALE_FIELDS: ScaleField[] = [
         { id: 'work', label: 'Work' },
         { id: 'home', label: 'Home, family or relationships' },
         { id: 'alone', label: 'Lonely or cut off' },
-        { id: 'irritable', label: 'Irritable or short-fused' },
+        { id: 'irritable', label: 'Bursts of anger' },
         { id: 'anxious', label: 'Anxious or on edge' },
         { id: 'no-reason', label: 'Nothing obvious: it just came' },
         DONT_KNOW,
@@ -167,14 +167,15 @@ export function activeScaleFields(enabledOptional: string[]): ScaleField[] {
 // Weekly "what else changed" card. Taps only, captured before the reveal so it
 // can't be written to explain a result she has already seen.
 export const WEEKLY_CHANGES: { id: string; label: string }[] = [
-  { id: 'meds', label: 'Medication or supplement change (including HRT)' },
-  { id: 'supplement', label: 'New or stopped supplement' },
+  // Self first; medication (including HRT) last, so nothing frames the week around it.
   { id: 'ill', label: 'Ill or injured' },
-  { id: 'travel', label: 'Travel or holiday' },
   { id: 'stress', label: 'Big stress or life event' },
-  { id: 'exercise', label: 'Change in exercise' },
-  { id: 'alcohol', label: 'Change in alcohol or caffeine' },
   { id: 'sleep-other', label: 'Sleep disturbed by something else' },
   { id: 'routine', label: 'Routine disrupted' },
+  { id: 'exercise', label: 'Change in exercise' },
+  { id: 'alcohol', label: 'Change in alcohol or caffeine' },
+  { id: 'travel', label: 'Travel or holiday' },
+  { id: 'supplement', label: 'New or stopped supplement' },
+  { id: 'meds', label: 'Medication change (including HRT)' },
 ];
 export const WEEKLY_NOTHING = { id: 'nothing', label: 'Nothing notable' };
