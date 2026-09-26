@@ -57,7 +57,7 @@ export const SYMPTOMS: LetterOption[] = [
   { id: 'fog', label: 'Thinking clearly or brain fog', letter: 'brain fog' },
   { id: 'mood', label: 'Mood', letter: 'low mood' },
   { id: 'anxiety', label: 'Anxiety', letter: 'anxiety' },
-  { id: 'aches', label: 'Aches or joint pain', letter: 'aches or joint pain' },
+  { id: 'aches', label: 'Pain', letter: 'pain' },
   { id: 'flushes', label: 'Hot flushes or night sweats', letter: 'hot flushes or night sweats' },
   { id: 'headaches', label: 'Headaches', letter: 'headaches' },
   { id: 'overload', label: 'Feeling overloaded', letter: 'feeling overloaded' },

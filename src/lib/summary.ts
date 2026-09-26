@@ -1,4 +1,4 @@
-import { HARD_DAY_THRESHOLD, REASONS_FROM, type ScaleField } from '../content/fields';
+import { HARD_DAY_THRESHOLD, reasonsFrom, type ScaleField } from '../content/fields';
 import { addDays, dayRange, isoWeek, type DayKey, type WeekKey } from './dates';
 import type { DayEntry, Period, WeekEntry } from './types';
 
@@ -41,9 +41,10 @@ export interface Summary {
     id: string;
     label: string;
     lead: string;
-    /** Days the answer was at or above REASONS_FROM. */
+    kind: 'cause' | 'place';
+    /** Days the answer was at or above the follow-up threshold. */
     problemDays: number;
-    reasons: { id: string; label: string; days: number }[];
+    reasons: { id: string; label: string; letter?: string; days: number }[];
   }[];
 }
 
@@ -118,12 +119,12 @@ export function buildSummary(
   const behind = fields
     .filter((f) => f.reasons)
     .map((f) => {
-      const problem = inRange.filter((d) => (d.scales[f.id] ?? 0) >= REASONS_FROM);
+      const problem = inRange.filter((d) => (d.scales[f.id] ?? 0) >= reasonsFrom(f));
       const reasons = f.reasons!.options
-        .map((o) => ({ id: o.id, label: o.label, days: problem.filter((d) => d.reasons?.[f.id]?.includes(o.id)).length }))
+        .map((o) => ({ id: o.id, label: o.label, letter: o.letter, days: problem.filter((d) => d.reasons?.[f.id]?.includes(o.id)).length }))
         .filter((r) => r.days > 0)
         .sort((a, b) => b.days - a.days);
-      return { id: f.id, label: f.label, lead: f.reasons!.lead, problemDays: problem.length, reasons };
+      return { id: f.id, label: f.label, lead: f.reasons!.lead, kind: f.reasons!.kind ?? 'cause', problemDays: problem.length, reasons };
     })
     .filter((b) => b.reasons.length > 0);
 

@@ -9,7 +9,7 @@ All health-adjacent copy is **draft** until it has been checked against current 
 | 3 | "Not medical advice" (every page and on the sheet) | `copy.ts` → `NOT_MEDICAL_ADVICE`, `SHEET_FOOTER` | Legal wording. | Draft |
 | 4 | Sheet method statement | `copy.ts` → `SHEET_METHOD` | Accurate and not overclaiming. | Draft |
 | 5 | Scale questions, hints and answer words (10 scales) | `src/content/fields.ts` | Are these the right set for perimenopause in ND women? Is the wording neutral? Do the five answers read as one step apart? Is the libido wording acceptable? | Draft |
-| 5b | "What was behind it?" reasons for sleep and mood | `fields.ts` → `reasons` | Are the common contributors covered without implying a cause? | Draft |
+| 5b | "What was behind it?" reasons for sleep and mood; "Where is it?" for pain | `fields.ts` → `reasons` | Are the common contributors and pain locations covered without implying a cause? Should chest be added, with a 999/111 signpost? "Bursts of anger" replaces "Irritable or short-fused". | Draft |
 | 6 | Weekly "what else changed" options | `fields.ts` → `WEEKLY_CHANGES` | Are the common confounds covered? | Draft |
 | 6b | "What's bothering you most?" symptom chips and their letter wording | `prep.ts` → `SYMPTOMS` | Her stated concern, not her readings. Is the list complete for the beta group? | Draft |
 | 7 | Appointment goals | `src/content/prep.ts` → `GOALS` | Informs, doesn't advise, doesn't set her against the GP. | Draft |

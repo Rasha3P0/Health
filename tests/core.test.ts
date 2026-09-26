@@ -162,9 +162,9 @@ describe('reasons in the summary', () => {
     ];
     const s = buildSummary({ start: '2026-09-07', revealOn: '2026-09-13' }, days, [], sleep);
     expect(s.behind).toEqual([
-      { id: 'sleep', label: 'Poor sleep', lead: 'When I slept badly', problemDays: 2, reasons: [
-        { id: 'sweats', label: 'Hot flushes or night sweats', days: 2 },
-        { id: 'loo', label: 'Needed the loo', days: 1 },
+      { id: 'sleep', label: 'Poor sleep', lead: 'When I slept badly', kind: 'cause', problemDays: 2, reasons: [
+        { id: 'sweats', label: 'Hot flushes or night sweats', letter: undefined, days: 2 },
+        { id: 'loo', label: 'Needed the loo', letter: undefined, days: 1 },
       ] },
     ]);
   });
@@ -329,5 +329,23 @@ describe('letter: v3 wording', () => {
     const text = t({ meds: ['gp'], lifestyle: { exercise: 'most' }, motherAge: 'gt45', lastPeriod: 'lt3', contraception: 'pill' });
     const order = ['My prescribed medication', 'Day to day', "My mother's periods", 'My last period', 'the pill'].map((w) => text.indexOf(w));
     expect(order.every((n, i) => n > 0 && (i === 0 || n > order[i - 1]))).toBe(true);
+  });
+});
+
+describe('pain and where', () => {
+  const pain = SCALE_FIELDS.filter((f) => f.id === 'aches');
+  it('asks where from Mild upwards, and never offers chest', () => {
+    expect(pain[0].reasons?.from).toBe(2);
+    expect(pain[0].reasons?.options.map((o) => o.id)).not.toContain('chest');
+  });
+  it('says where in the letter once the record opens', () => {
+    const days: DayEntry[] = dayRange('2026-09-01', '2026-09-10').map((d, i) => ({
+      date: d, scales: { aches: i < 8 ? 2 : 1 }, reasons: { aches: i < 5 ? ['back', 'head'] : ['head'] }, savedAt: '',
+    }));
+    const opened: Period = { id: 'p', start: '2026-09-01', revealOn: '2026-09-10', kind: 'gp' };
+    const summary = buildSummary(opened, days, [], pain);
+    expect(summary.behind[0].reasons.slice(0, 2).map((r) => [r.id, r.days])).toEqual([['head', 8], ['back', 5]]);
+    const text = letterToText(buildLetter({ prep: { ...EMPTY_PREP, goals: ['talk'] }, today: '2026-09-10', period: opened, summary }));
+    expect(text).toContain('When I had pain, it was most often in my head (8 of 8 days).');
   });
 });

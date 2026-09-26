@@ -143,7 +143,7 @@ function Sheet({ period }: { period: Period }) {
 
       {s.behind.length > 0 && (
         <section>
-          <h3>What I noted was behind it</h3>
+          <h3>What I noted alongside it</h3>
           <ul>
             {s.behind.map((b) => (
               <li key={b.id}>

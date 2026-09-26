@@ -28,8 +28,16 @@ export interface ScaleField {
    * direction: 1 = no problem, 5 = the worst. Stored as the number.
    */
   answers: [string, string, string, string, string];
-  /** Optional follow-up: what was behind it? Asked when the answer is REASONS_FROM or worse. */
-  reasons?: { question: string; /** Opens the letter sentence, e.g. "When I slept badly". */ lead: string; options: { id: string; label: string }[] };
+  /** Optional follow-up tick boxes (what was behind it, or where). Asked from `from` (default REASONS_FROM) upwards. */
+  reasons?: {
+    question: string;
+    /** Opens the letter sentence, e.g. "When I slept badly". */
+    lead: string;
+    /** 'cause' = "the reason I noted most often was …"; 'place' = "it was most often in …". */
+    kind?: 'cause' | 'place';
+    from?: number;
+    options: { id: string; label: string; /** Letter wording, for 'place' ("in my back"). */ letter?: string }[];
+  };
   /** Off by default; she can switch it on in Settings. */
   optional?: boolean;
 }
@@ -53,6 +61,9 @@ export const HARD_DAY_THRESHOLD = 4;
 
 /** Answer at or above this and the "what was behind it?" follow-up is asked. */
 export const REASONS_FROM = 3;
+
+/** The answer at which this field's follow-up is asked. */
+export const reasonsFrom = (f: ScaleField) => f.reasons?.from ?? REASONS_FROM;
 
 const DONT_KNOW = { id: 'unknown', label: "Not sure" };
 
@@ -109,9 +120,34 @@ export const SCALE_FIELDS: ScaleField[] = [
     answers: ['Clear', 'Mostly clear', 'A bit foggy', 'Foggy', 'Very foggy'],
   },
   {
-    id: 'aches', kind: 'scale', contract: 'blind', label: 'Joint or muscle aches',
-    question: 'Any joint or muscle aches?', hint: 'Today, overall',
+    // Was "Joint or muscle aches". Id kept, so earlier readings carry over as pain readings.
+    id: 'aches', kind: 'scale', contract: 'blind', label: 'Pain',
+    question: 'Any pain?', hint: 'Anywhere, today',
     answers: ['None', 'Mild', 'Noticeable', 'Bad', 'Severe'],
+    reasons: {
+      question: 'Where is it?',
+      lead: 'When I had pain',
+      kind: 'place',
+      // Where matters even when it's mild.
+      from: 2,
+      // Chest is deliberately absent: chest pain can need urgent action, so it would need a
+      // visible safety signpost (like bleeding) and clinician-reviewed wording first.
+      options: [
+        { id: 'head', label: 'Head', letter: 'in my head' },
+        { id: 'neck', label: 'Neck or shoulders', letter: 'in my neck or shoulders' },
+        { id: 'back', label: 'Back', letter: 'in my back' },
+        { id: 'joints', label: 'Joints', letter: 'in my joints' },
+        { id: 'muscles', label: 'Muscles', letter: 'in my muscles' },
+        { id: 'hands', label: 'Hands or wrists', letter: 'in my hands or wrists' },
+        { id: 'legs', label: 'Legs or feet', letter: 'in my legs or feet' },
+        { id: 'jaw', label: 'Jaw or face', letter: 'in my jaw or face' },
+        { id: 'tummy', label: 'Tummy', letter: 'in my tummy' },
+        { id: 'all-over', label: 'All over', letter: 'all over' },
+        { id: 'breasts', label: 'Breasts', letter: 'in my breasts' },
+        { id: 'pelvis', label: 'Pelvis or period-type pain', letter: 'in my pelvis' },
+        { id: 'elsewhere', label: 'Somewhere else', letter: 'somewhere else' },
+      ],
+    },
   },
   {
     id: 'overload', kind: 'scale', contract: 'blind', label: 'Sensory or social overload',

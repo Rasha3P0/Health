@@ -111,7 +111,10 @@ export function buildLetter(args: {
     if (most.length) text += ` The things that affected me most were ${list(most)}.`;
     for (const b of summary.behind) {
       const top = b.reasons.find((r) => r.id !== 'unknown');
-      if (top) text += ` ${b.lead}, the reason I noted most often was ${top.label.toLowerCase()} (${top.days} of ${b.problemDays} days).`;
+      if (!top) continue;
+      text += b.kind === 'place'
+        ? ` ${b.lead}, it was most often ${top.letter ?? top.label.toLowerCase()} (${top.days} of ${b.problemDays} days).`
+        : ` ${b.lead}, the reason I noted most often was ${top.label.toLowerCase()} (${top.days} of ${b.problemDays} days).`;
     }
     text += " I've brought the full summary with me.";
     sections.push({ text });

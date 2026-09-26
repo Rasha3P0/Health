@@ -1,6 +1,6 @@
 import { createContext } from 'preact';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'preact/hooks';
-import { REASONS_FROM } from './content/fields';
+import { reasonsFrom, SCALE_FIELDS } from './content/fields';
 import * as db from './lib/db';
 import { addDays, isoWeek, today as todayKey, type DayKey } from './lib/dates';
 import type { DayEntry, Period, Prep, Settings, Snapshot } from './lib/types';
@@ -82,7 +82,8 @@ export function StoreProvider({ children }: { children: preact.ComponentChildren
           if (value === undefined) delete d.scales[field];
           else d.scales[field] = value;
           // Reasons only make sense while the answer says there was a problem.
-          if (d.reasons?.[field] && (value === undefined || value < REASONS_FROM)) {
+          const f = SCALE_FIELDS.find((x) => x.id === field);
+          if (f && d.reasons?.[field] && (value === undefined || value < reasonsFrom(f))) {
             const { [field]: _dropped, ...rest } = d.reasons;
             d.reasons = rest;
           }

@@ -7,7 +7,7 @@ import {
   activeScaleFields,
   BLEEDING_EMPHASISE,
   BLEEDING_FIELD,
-  REASONS_FROM,
+  reasonsFrom,
   SCALE_VALUES,
   WEEKLY_CHANGES,
   WEEKLY_NOTHING,
@@ -132,7 +132,7 @@ function CheckIn({ date, onClose }: { date: DayKey; onClose: () => void }) {
   const steps = useMemo(
     () =>
       baseSteps.flatMap((st): Step[] =>
-        st.kind === 'scale' && st.field.reasons && (entry?.scales[st.field.id] ?? 0) >= REASONS_FROM
+        st.kind === 'scale' && st.field.reasons && (entry?.scales[st.field.id] ?? 0) >= reasonsFrom(st.field)
           ? [st, { kind: 'reasons', field: st.field }]
           : [st],
       ),
@@ -220,7 +220,11 @@ function CheckIn({ date, onClose }: { date: DayKey; onClose: () => void }) {
       {step.kind === 'reasons' && step.field.reasons && (
         <>
           <h1 class="question" tabIndex={-1} ref={heading}>{step.field.reasons.question}</h1>
-          <p class="quiet">Tick any that fit. Only you know, and it helps spot what's driving it.</p>
+          <p class="quiet">
+            {step.field.reasons.kind === 'place'
+              ? 'Tick anywhere that hurts.'
+              : "Tick any that fit. Only you know, and it helps spot what's driving it."}
+          </p>
           <MultiChoice
             stacked
             label={step.field.reasons.question}
